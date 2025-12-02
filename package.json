@@ -1,0 +1,36 @@
+{
+  "name": "music-wiki",
+  "version": "1.0.0",
+  "description": "Aplikacja typu SPA zaprojektowana do wizualizacji i zarządzania biblioteką muzyczną. Aplikacja umożliwia użytkownikom tworzenie połączeń między artystami, albumami i utworami za pomocą grafowej bazy danych.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "frontend": "cd frontend && npm run dev",
+    "frontend:build": "cd frontend && npm run build",
+    "sample-data": "node scripts/addSampleData.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/annov723/music-wiki.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/annov723/music-wiki/issues"
+  },
+  "homepage": "https://github.com/annov723/music-wiki#readme",
+  "dependencies": {
+    "@apollo/server": "^5.2.0",
+    "@neo4j/graphql": "^7.3.2",
+    "dotenv": "^17.2.3",
+    "graphql": "^16.12.0",
+    "neo4j-driver": "^6.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
