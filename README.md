@@ -63,3 +63,30 @@ npm run frontend
 
 * serwer: http://localhost:4000
 * web application: http://localhost:5173
+
+## Komponenty Frontend
+
+### GraphCanvas.js
+Główny komponent wizualizacji grafu z funkcjami:
+- **Auto-resize:** Automatyczne dostosowywanie do rozmiaru okna
+- **Auto-fit:** Automatyczne dopasowanie widoku do wszystkich węzłów  
+- **Color coding:** Kolorowanie węzłów według typu (group property)
+- **Node labels:** Wyświetlanie etykiet na węzłach przy odpowiednim przybliżeniu
+- **Interactions:** Klikanie węzłów (focus), hover effects, zoom, pan
+- **Responsive:** Pełne wsparcie dla różnych rozmiarów ekranu
+
+### transformData()
+Funkcja utilitarna konwertująca dane GraphQL do formatu grafu:
+```javascript
+import { transformData } from './utils/transformData';
+
+const graphData = transformData(apolloQueryResult);
+// Returns: { nodes: [], links: [] }
+// Nodes have: id, type, group, name, ...otherData  
+// Links have: id, source, target, type, value
+```
+
+**Node groups dla color coding:**
+- Group 1: Artists (czerwony #ff6b6b)
+- Group 2: Albums (niebieskozielony #4ecdc4) 
+- Group 3: Songs (niebieski #45b7d1)
