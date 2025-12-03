@@ -3,6 +3,8 @@ import { useQuery } from '@apollo/client';
 import { GET_GRAPH_DATA } from '../graphql/queries';
 import { transformData } from '../utils/transformData';
 import GraphCanvas from './GraphCanvas.jsx';
+import GraphToolbar from './GraphToolbar.jsx';
+import InstructionsPanel from './InstructionsPanel.jsx';
 
 const MusicGraph = () => {
   const { loading, error, data } = useQuery(GET_GRAPH_DATA);
@@ -70,6 +72,12 @@ const MusicGraph = () => {
           Click nodes to focus • Mouse wheel to zoom • Drag to pan
         </div>
       </div>
+
+      {/* Graph Toolbar */}
+      <GraphToolbar />
+
+      {/* Instructions Panel */}
+      <InstructionsPanel />
 
       {/* Graph Canvas */}
       <GraphCanvas graphData={graphData} />

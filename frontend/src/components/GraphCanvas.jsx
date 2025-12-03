@@ -1,7 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
+import RelationshipButton from './RelationshipButton';
 
-const GraphCanvas = ({ graphData }) => {
+const GraphCanvas = ({ graphData, onNodeClick, selectedNode }) => {
   const fgRef = useRef();
   const [dimensions, setDimensions] = useState({
     width: window.innerWidth,
@@ -74,7 +75,8 @@ const GraphCanvas = ({ graphData }) => {
   };
 
   return (
-    <div style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
+    <div style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative' }}>
+      <RelationshipButton />
       <ForceGraph2D
         ref={fgRef}
         graphData={graphData}
@@ -113,9 +115,10 @@ const GraphCanvas = ({ graphData }) => {
           ctx.fillStyle = getNodeColor(node);
           ctx.fill();
 
-          // Draw border
-          ctx.strokeStyle = '#ffffff';
-          ctx.lineWidth = 1.5 / globalScale;
+          // Draw border - highlight if selected
+          const isSelected = selectedNode && selectedNode.id === node.id;
+          ctx.strokeStyle = isSelected ? '#ffff00' : '#ffffff';
+          ctx.lineWidth = isSelected ? 3 / globalScale : 1.5 / globalScale;
           ctx.stroke();
 
           // Draw label
@@ -149,10 +152,13 @@ const GraphCanvas = ({ graphData }) => {
         
         onNodeClick={(node) => {
           console.log('Clicked node:', node);
+          if (onNodeClick) {
+            onNodeClick(node);
+          }
           // Focus on clicked node
           if (fgRef.current) {
             fgRef.current.centerAt(node.x, node.y, 1000);
-            fgRef.current.zoom(3, 1000);
+            fgRef.current.zoom(2, 1000);
           }
         }}
         
