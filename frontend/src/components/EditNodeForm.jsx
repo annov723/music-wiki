@@ -114,37 +114,37 @@ const EditNodeForm = ({ node, onClose, onNodeUpdated }) => {
       let result;
       
       if (node.type === 'artist') {
-        const update = {
-          name: formData.name,
-          nationality: formData.nationality || null,
-          spotifyUrl: formData.spotifyUrl || null
-        };
+        const update = {};
+        if (formData.name) update.name = { set: formData.name };
+        if (formData.nationality) update.nationality = { set: formData.nationality };
+        if (formData.spotifyUrl) update.spotifyUrl = { set: formData.spotifyUrl };
+        
         result = await updateArtist({
           variables: {
-            where: { id: node.id },
+            where: { id: { in: [node.id] } },
             update
           }
         });
       } else if (node.type === 'album') {
-        const update = {
-          title: formData.title,
-          releaseYear: formData.releaseYear ? parseInt(formData.releaseYear) : null
-        };
+        const update = {};
+        if (formData.title) update.title = { set: formData.title };
+        if (formData.releaseYear) update.releaseYear = { set: parseInt(formData.releaseYear) };
+        
         result = await updateAlbum({
           variables: {
-            where: { id: node.id },
+            where: { id: { in: [node.id] } },
             update
           }
         });
       } else if (node.type === 'song') {
-        const update = {
-          title: formData.title,
-          genre: formData.genre || null,
-          spotifyUrl: formData.spotifyUrl || null
-        };
+        const update = {};
+        if (formData.title) update.title = { set: formData.title };
+        if (formData.genre) update.genre = { set: formData.genre };
+        if (formData.spotifyUrl) update.spotifyUrl = { set: formData.spotifyUrl };
+        
         result = await updateSong({
           variables: {
-            where: { id: node.id },
+            where: { id: { in: [node.id] } },
             update
           }
         });
@@ -170,11 +170,11 @@ const EditNodeForm = ({ node, onClose, onNodeUpdated }) => {
 
     try {
       if (node.type === 'artist') {
-        await deleteArtist({ variables: { where: { id: node.id } } });
+        await deleteArtist({ variables: { where: { id: { in: [node.id] } } } });
       } else if (node.type === 'album') {
-        await deleteAlbum({ variables: { where: { id: node.id } } });
+        await deleteAlbum({ variables: { where: { id: { in: [node.id] } } } });
       } else if (node.type === 'song') {
-        await deleteSong({ variables: { where: { id: node.id } } });
+        await deleteSong({ variables: { where: { id: { in: [node.id] } } } });
       }
 
       alert(`${node.type.charAt(0).toUpperCase() + node.type.slice(1)} deleted successfully!`);
