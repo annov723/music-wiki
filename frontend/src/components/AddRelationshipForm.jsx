@@ -41,19 +41,22 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
         label: 'Artist RELEASED Album',
         sourceType: 'artist',
         targetType: 'album',
-        description: 'Connect an artist to an album they released'
+        description: 'Connect an artist to an album they released (Artist can have many albums)',
+        icon: '🎵'
       },
       'PERFORMED': {
         label: 'Artist PERFORMED Song',
         sourceType: 'artist',
         targetType: 'song',
-        description: 'Connect an artist to a song they performed'
+        description: 'Connect an artist to a song they performed (Song can have multiple artists)',
+        icon: '🎤'
       },
       'CONTAINS': {
         label: 'Album CONTAINS Song',
         sourceType: 'album',
         targetType: 'song',
-        description: 'Connect an album to a song it contains'
+        description: 'Connect an album to a song it contains (Song belongs to one album)',
+        icon: '💿'
       }
     };
   };
@@ -83,6 +86,18 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
     if (!sourceNode || !targetNode) {
       alert('Please select both source and target nodes');
       return;
+    }
+
+    // Validation for CONTAINS relationship (Song can only belong to one album)
+    if (relationshipType === 'CONTAINS') {
+      const selectedSong = songsData?.songs?.find(s => s.id === targetNode);
+      if (selectedSong && selectedSong.album && selectedSong.album.length > 0) {
+        const currentAlbum = selectedSong.album[0];
+        if (currentAlbum.id !== sourceNode) {
+          alert(`This song is already in album "${currentAlbum.title}". A song can only belong to one album.`);
+          return;
+        }
+      }
     }
 
     try {
@@ -186,6 +201,23 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
           Create Relationship
         </h2>
 
+        {/* Relationship Rules Summary */}
+        <div style={{ 
+          marginBottom: '20px',
+          padding: '12px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '6px',
+          fontSize: '12px',
+          color: '#495057'
+        }}>
+          <strong>Relationship Rules:</strong>
+          <ul style={{ margin: '8px 0 0 0', paddingLeft: '18px' }}>
+            <li>🎤 <strong>Artist</strong>: Can have many albums and many songs</li>
+            <li>💿 <strong>Album</strong>: Can have many artists and many songs</li>
+            <li>🎵 <strong>Song</strong>: Belongs to ONE album, can have many artists</li>
+          </ul>
+        </div>
+
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '20px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
@@ -201,13 +233,21 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
             >
               {Object.entries(rules).map(([key, rule]) => (
                 <option key={key} value={key}>
-                  {rule.label}
+                  {rule.icon} {rule.label}
                 </option>
               ))}
             </select>
-            <p style={{ fontSize: '12px', color: '#666', marginTop: '5px' }}>
-              {currentRule.description}
-            </p>
+            <div style={{ 
+              fontSize: '12px', 
+              color: '#666', 
+              marginTop: '5px',
+              padding: '8px',
+              backgroundColor: '#e3f2fd',
+              borderRadius: '4px',
+              borderLeft: '4px solid #2196f3'
+            }}>
+              💡 {currentRule.description}
+            </div>
           </div>
 
           <div style={{ marginBottom: '15px' }}>
