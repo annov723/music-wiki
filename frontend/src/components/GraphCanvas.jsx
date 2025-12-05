@@ -4,33 +4,11 @@ import RelationshipButton from './RelationshipButton';
 
 const GraphCanvas = ({ graphData, onNodeClick, selectedNode }) => {
   const fgRef = useRef();
+  const containerRef = useRef();
   const [dimensions, setDimensions] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight
+    width: 800,
+    height: 600
   });
-
-  // Auto-resize functionality
-  useEffect(() => {
-    const handleResize = () => {
-      setDimensions({
-        width: window.innerWidth,
-        height: window.innerHeight
-      });
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // Auto-fit graph on data change
-  useEffect(() => {
-    if (fgRef.current && graphData.nodes.length > 0) {
-      // Auto-zoom to fit all nodes
-      setTimeout(() => {
-        fgRef.current.zoomToFit(400, 20);
-      }, 100);
-    }
-  }, [graphData]);
 
   // Color scheme based on node group
   const getNodeColor = (node) => {
@@ -75,8 +53,18 @@ const GraphCanvas = ({ graphData, onNodeClick, selectedNode }) => {
   };
 
   return (
-    <div style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative' }}>
+    <div 
+      ref={containerRef}
+      style={{ 
+        width: '100%', 
+        height: '100%', 
+        overflow: 'hidden', 
+        position: 'relative',
+        minHeight: '400px'
+      }}
+    >
       <RelationshipButton />
+      
       <ForceGraph2D
         ref={fgRef}
         graphData={graphData}
@@ -155,11 +143,18 @@ const GraphCanvas = ({ graphData, onNodeClick, selectedNode }) => {
           if (onNodeClick) {
             onNodeClick(node);
           }
-          // Focus on clicked node
+          // Gentle focus on clicked node without aggressive zoom
           if (fgRef.current) {
-            fgRef.current.centerAt(node.x, node.y, 1000);
-            fgRef.current.zoom(2, 1000);
+            fgRef.current.centerAt(node.x, node.y, 800);
+            fgRef.current.zoom(Math.max(fgRef.current.zoom(), 1.5), 600);
           }
+        }}
+        
+        // Enable node dragging
+        onNodeDragEnd={(node) => {
+          // Fix node position after drag
+          node.fx = node.x;
+          node.fy = node.y;
         }}
         
         onNodeHover={(node) => {
@@ -167,19 +162,29 @@ const GraphCanvas = ({ graphData, onNodeClick, selectedNode }) => {
           document.body.style.cursor = node ? 'pointer' : 'default';
         }}
         
-        // Physics settings
-        d3AlphaDecay={0.02}
-        d3VelocityDecay={0.3}
-        cooldownTicks={100}
-        warmupTicks={100}
+        // Physics settings - more stable
+        d3AlphaDecay={0.05}
+        d3VelocityDecay={0.4}
+        cooldownTicks={50}
+        warmupTicks={50}
         
         // Background
         backgroundColor="#2c3e50"
         
-        // Enable zoom and pan
+        // Enable zoom and pan with better controls
         enableZoomPanInteraction={true}
+        enablePanInteraction={true}
+        enableZoomInteraction={true}
         minZoom={0.1}
-        maxZoom={10}
+        maxZoom={8}
+        
+        // Control initial positioning
+        onEngineStart={() => {
+          // Set initial center position
+          if (fgRef.current) {
+            fgRef.current.centerAt(0, 0, 0);
+          }
+        }}
       />
     </div>
   );

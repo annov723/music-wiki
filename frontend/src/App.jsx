@@ -4,7 +4,7 @@ import GraphToolbar from './components/GraphToolbar.jsx';
 import InstructionsPanel from './components/InstructionsPanel.jsx';
 import AddNodeForm from './components/AddNodeForm.jsx';
 import EditNodeForm from './components/EditNodeForm.jsx';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { GET_GRAPH_DATA } from './graphql/queries';
 import { transformData } from './utils/transformData';
 import './App.css'

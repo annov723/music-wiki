@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from '@apollo/client/core';
 
 // Comprehensive query to fetch all graph data for visualization
 export const GET_GRAPH_DATA = gql`

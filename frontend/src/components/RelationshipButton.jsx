@@ -29,7 +29,7 @@ const RelationshipButton = () => {
           onMouseEnter={(e) => e.target.style.backgroundColor = '#218838'}
           onMouseLeave={(e) => e.target.style.backgroundColor = '#28a745'}
         >
-          🔗 Add Relationship
+          Dodaj relację
         </button>
       </div>
 

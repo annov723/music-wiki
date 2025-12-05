@@ -1,5 +1,5 @@
 import React from 'react';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { GET_GRAPH_DATA } from '../graphql/queries';
 import { transformData } from '../utils/transformData';
 import GraphCanvas from './GraphCanvas.jsx';

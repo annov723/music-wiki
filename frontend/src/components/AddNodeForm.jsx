@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { CREATE_ARTIST, CREATE_ALBUM, CREATE_SONG } from '../graphql/mutations';
 import { GET_GRAPH_DATA } from '../graphql/queries';
 

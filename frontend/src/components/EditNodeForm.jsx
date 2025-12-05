@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useMutation } from '@apollo/client';
-import { gql } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
+import { gql } from '@apollo/client/core';
 import { GET_GRAPH_DATA } from '../graphql/queries';
 
 // Update mutations for each node type

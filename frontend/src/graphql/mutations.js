@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from '@apollo/client/core';
 
 // Mutations for creating nodes
 export const CREATE_ARTIST = gql`
