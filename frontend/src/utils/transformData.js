@@ -1,9 +1,7 @@
-// Utility function to transform GraphQL data into nodes and links for force graph
 export const transformData = (data) => {
   const nodes = new Map();
   const links = [];
 
-  // Helper function to add node if it doesn't exist
   const addNode = (id, type, nodeData) => {
     if (!nodes.has(id)) {
       let group;
@@ -31,7 +29,6 @@ export const transformData = (data) => {
     }
   };
 
-  // Helper function to add link if it doesn't exist
   const addLink = (source, target, type) => {
     const linkId = `${source}-${target}-${type}`;
     if (!links.find(link => link.id === linkId)) {
@@ -39,13 +36,12 @@ export const transformData = (data) => {
         id: linkId,
         source,
         target,
-        type, // 'RELEASED', 'PERFORMED', 'CONTAINS'
-        value: 1 // For link thickness
+        type, 
+        value: 1 
       });
     }
   };
 
-  // Process artists
   if (data.artists) {
     data.artists.forEach(artist => {
       addNode(artist.id, 'artist', {
@@ -54,7 +50,6 @@ export const transformData = (data) => {
         spotifyUrl: artist.spotifyUrl
       });
 
-      // Process artist's albums
       if (artist.albums) {
         artist.albums.forEach(album => {
           addNode(album.id, 'album', {
@@ -62,10 +57,8 @@ export const transformData = (data) => {
             releaseYear: album.releaseYear
           });
           
-          // Add RELEASED relationship
           addLink(artist.id, album.id, 'RELEASED');
 
-          // Process songs in each album
           if (album.songs) {
             album.songs.forEach(song => {
               addNode(song.id, 'song', {
@@ -74,10 +67,8 @@ export const transformData = (data) => {
                 spotifyUrl: song.spotifyUrl
               });
               
-              // Add CONTAINS relationship (album contains song)
               addLink(album.id, song.id, 'CONTAINS');
 
-              // Add PERFORMED relationships for song artists
               if (song.artists) {
                 song.artists.forEach(songArtist => {
                   addNode(songArtist.id, 'artist', {
@@ -91,7 +82,6 @@ export const transformData = (data) => {
         });
       }
 
-      // Process artist's songs (direct relationship)
       if (artist.songs) {
         artist.songs.forEach(song => {
           addNode(song.id, 'song', {
@@ -100,10 +90,8 @@ export const transformData = (data) => {
             spotifyUrl: song.spotifyUrl
           });
           
-          // Add PERFORMED relationship
           addLink(artist.id, song.id, 'PERFORMED');
 
-          // Add album relationship if exists
           if (song.album && song.album.length > 0) {
             song.album.forEach(album => {
               addNode(album.id, 'album', {
@@ -117,7 +105,6 @@ export const transformData = (data) => {
     });
   }
 
-  // Process standalone albums
   if (data.albums) {
     data.albums.forEach(album => {
       addNode(album.id, 'album', {
@@ -125,16 +112,14 @@ export const transformData = (data) => {
         releaseYear: album.releaseYear
       });
 
-      // Process album artist (single artist per album)
       if (album.artist && album.artist.length > 0) {
-        const artist = album.artist[0]; // Album can only have one artist
+        const artist = album.artist[0]; 
         addNode(artist.id, 'artist', {
           name: artist.name
         });
         addLink(artist.id, album.id, 'RELEASED');
       }
 
-      // Process album songs
       if (album.songs) {
         album.songs.forEach(song => {
           addNode(song.id, 'song', {
@@ -143,7 +128,7 @@ export const transformData = (data) => {
           });
           addLink(album.id, song.id, 'CONTAINS');
 
-          // Process song artists
+          
           if (song.artists) {
             song.artists.forEach(artist => {
               addNode(artist.id, 'artist', {
@@ -157,7 +142,6 @@ export const transformData = (data) => {
     });
   }
 
-  // Process standalone songs
   if (data.songs) {
     data.songs.forEach(song => {
       addNode(song.id, 'song', {
@@ -166,7 +150,6 @@ export const transformData = (data) => {
         spotifyUrl: song.spotifyUrl
       });
 
-      // Process song artists
       if (song.artists) {
         song.artists.forEach(artist => {
           addNode(artist.id, 'artist', {
@@ -176,7 +159,6 @@ export const transformData = (data) => {
         });
       }
 
-      // Process song album
       if (song.album && song.album.length > 0) {
         song.album.forEach(album => {
           addNode(album.id, 'album', {
