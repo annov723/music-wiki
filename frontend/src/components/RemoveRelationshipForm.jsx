@@ -74,6 +74,36 @@ const RemoveRelationshipForm = ({ onClose, onRelationshipRemoved }) => {
     }
   };
 
+  // Filter target nodes to show only those connected to the selected source node
+  const getFilteredTargetNodes = () => {
+    const rules = getRelationshipRules()[relationshipType];
+    const allTargets = getNodesForType(rules.targetType);
+    
+    if (!sourceNode) {
+      return allTargets;
+    }
+
+    const sourceNodeData = getNodesForType(rules.sourceType).find(n => n.id === sourceNode);
+    if (!sourceNodeData) {
+      return allTargets;
+    }
+
+    // Filter based on relationship type
+    switch (relationshipType) {
+      case 'RELEASED': // Artist -> Album
+        return sourceNodeData.albums || [];
+      
+      case 'PERFORMED': // Artist -> Song
+        return sourceNodeData.songs || [];
+      
+      case 'CONTAINS': // Album -> Song
+        return sourceNodeData.songs || [];
+      
+      default:
+        return allTargets;
+    }
+  };
+
   const handleRelationshipTypeChange = (e) => {
     setRelationshipType(e.target.value);
     setSourceNode('');
@@ -150,7 +180,7 @@ const RemoveRelationshipForm = ({ onClose, onRelationshipRemoved }) => {
   const rules = getRelationshipRules();
   const currentRule = rules[relationshipType];
   const sourceNodes = getNodesForType(currentRule.sourceType);
-  const targetNodes = getNodesForType(currentRule.targetType);
+  const targetNodes = getFilteredTargetNodes();
 
   const inputStyle = {
     width: '100%',
@@ -238,7 +268,10 @@ const RemoveRelationshipForm = ({ onClose, onRelationshipRemoved }) => {
             </label>
             <select
               value={sourceNode}
-              onChange={(e) => setSourceNode(e.target.value)}
+              onChange={(e) => {
+                setSourceNode(e.target.value);
+                setTargetNode(''); // Clear target when source changes
+              }}
               required
               style={inputStyle}
             >
@@ -271,14 +304,35 @@ const RemoveRelationshipForm = ({ onClose, onRelationshipRemoved }) => {
               onChange={(e) => setTargetNode(e.target.value)}
               required
               style={inputStyle}
+              disabled={!sourceNode || targetNodes.length === 0}
             >
-              <option value="">Select {currentRule.targetType}...</option>
+              <option value="">
+                {!sourceNode 
+                  ? `Select ${currentRule.sourceType} first...` 
+                  : targetNodes.length === 0 
+                    ? `No connected ${currentRule.targetType}s found`
+                    : `Select ${currentRule.targetType}...`
+                }
+              </option>
               {targetNodes.map((node) => (
                 <option key={node.id} value={node.id}>
                   {node.name || node.title}
                 </option>
               ))}
             </select>
+            {sourceNode && targetNodes.length === 0 && (
+              <div style={{ 
+                fontSize: '12px', 
+                color: '#f57c00', 
+                marginTop: '5px',
+                padding: '8px',
+                backgroundColor: '#fff3e0',
+                borderRadius: '4px',
+                borderLeft: '4px solid #ff9800'
+              }}>
+                ℹ️ No {currentRule.targetType}s are connected to this {currentRule.sourceType}
+              </div>
+            )}
           </div>
 
           <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>

@@ -167,6 +167,14 @@ export const GET_ALL_ARTISTS = gql`
     artists {
       id
       name
+      albums {
+        id
+        title
+      }
+      songs {
+        id
+        title
+      }
     }
   }
 `;
@@ -180,6 +188,10 @@ export const GET_ALL_ALBUMS = gql`
         id
         name
       }
+      songs {
+        id
+        title
+      }
     }
   }
 `;
@@ -189,6 +201,14 @@ export const GET_ALL_SONGS = gql`
     songs {
       id
       title
+      artists {
+        id
+        name
+      }
+      album {
+        id
+        title
+      }
     }
   }
 `;
