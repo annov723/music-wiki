@@ -41,8 +41,8 @@ export const CREATE_SONG = gql`
 
 // Mutations for updating nodes to create relationships
 export const CONNECT_ARTIST_TO_ALBUM = gql`
-  mutation ConnectArtistToAlbum($where: ArtistWhere, $connect: ArtistConnectInput) {
-    updateArtists(where: $where, connect: $connect) {
+  mutation ConnectArtistToAlbum($where: ArtistWhere, $update: ArtistUpdateInput) {
+    updateArtists(where: $where, update: $update) {
       artists {
         id
         name
@@ -56,8 +56,8 @@ export const CONNECT_ARTIST_TO_ALBUM = gql`
 `;
 
 export const CONNECT_ARTIST_TO_SONG = gql`
-  mutation ConnectArtistToSong($where: ArtistWhere, $connect: ArtistConnectInput) {
-    updateArtists(where: $where, connect: $connect) {
+  mutation ConnectArtistToSong($where: ArtistWhere, $update: ArtistUpdateInput) {
+    updateArtists(where: $where, update: $update) {
       artists {
         id
         name
@@ -71,8 +71,8 @@ export const CONNECT_ARTIST_TO_SONG = gql`
 `;
 
 export const CONNECT_ALBUM_TO_SONG = gql`
-  mutation ConnectAlbumToSong($where: AlbumWhere, $connect: AlbumConnectInput) {
-    updateAlbums(where: $where, connect: $connect) {
+  mutation ConnectAlbumToSong($where: AlbumWhere, $update: AlbumUpdateInput) {
+    updateAlbums(where: $where, update: $update) {
       albums {
         id
         title
@@ -86,8 +86,8 @@ export const CONNECT_ALBUM_TO_SONG = gql`
 `;
 
 export const CONNECT_SONG_TO_ALBUM = gql`
-  mutation ConnectSongToAlbum($where: SongWhere, $connect: SongConnectInput) {
-    updateSongs(where: $where, connect: $connect) {
+  mutation ConnectSongToAlbum($where: SongWhere, $update: SongUpdateInput) {
+    updateSongs(where: $where, update: $update) {
       songs {
         id
         title

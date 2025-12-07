@@ -110,8 +110,8 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
         result = await connectArtistToAlbum({
           variables: {
             where: { id: { in: [sourceNode] } },
-            connect: {
-              albums: [{ where: { node: { id: { in: [targetNode] } } } }]
+            update: {
+              albums: [{ connect: [{ where: { node: { id: { in: [targetNode] } } } }] }]
             }
           }
         });
@@ -120,8 +120,8 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
         result = await connectArtistToSong({
           variables: {
             where: { id: { in: [sourceNode] } },
-            connect: {
-              songs: [{ where: { node: { id: { in: [targetNode] } } } }]
+            update: {
+              songs: [{ connect: [{ where: { node: { id: { in: [targetNode] } } } }] }]
             }
           }
         });
@@ -130,8 +130,8 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
         result = await connectAlbumToSong({
           variables: {
             where: { id: { in: [sourceNode] } },
-            connect: {
-              songs: [{ where: { node: { id: { in: [targetNode] } } } }]
+            update: {
+              songs: [{ connect: [{ where: { node: { id: { in: [targetNode] } } } }] }]
             }
           }
         });
@@ -140,8 +140,8 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
         await connectSongToAlbum({
           variables: {
             where: { id: { in: [targetNode] } },
-            connect: {
-              album: [{ where: { node: { id: { in: [sourceNode] } } } }]
+            update: {
+              album: [{ connect: [{ where: { node: { id: { in: [sourceNode] } } } }] }]
             }
           }
         });
