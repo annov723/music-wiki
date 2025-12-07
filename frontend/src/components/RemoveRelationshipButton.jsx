@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import RemoveRelationshipForm from './RemoveRelationshipForm';
 
 const RemoveRelationshipButton = () => {
@@ -8,8 +8,8 @@ const RemoveRelationshipButton = () => {
     <>
       <div style={{
         position: 'absolute',
-        top: 15,
-        right: 200,
+        top: 65,
+        right: 15,
         zIndex: 999
       }}>
         <button
@@ -24,12 +24,13 @@ const RemoveRelationshipButton = () => {
             fontSize: '14px',
             fontWeight: 'bold',
             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
-            transition: 'background-color 0.2s'
+            transition: 'background-color 0.2s',
+            width: '150px'
           }}
           onMouseEnter={(e) => e.target.style.backgroundColor = '#c62828'}
           onMouseLeave={(e) => e.target.style.backgroundColor = '#d32f2f'}
         >
-          🗑️ Remove Relationship
+          Usuń krawędź
         </button>
       </div>
 
@@ -37,7 +38,7 @@ const RemoveRelationshipButton = () => {
         <RemoveRelationshipForm
           onClose={() => setShowRemoveRelationship(false)}
           onRelationshipRemoved={(result) => {
-            console.log('Relationship removed:', result);
+            console.log('Krawędź usunięta:', result);
           }}
         />
       )}

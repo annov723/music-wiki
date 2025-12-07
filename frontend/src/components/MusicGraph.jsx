@@ -73,13 +73,8 @@ const MusicGraph = () => {
         </div>
       </div>
 
-      {/* Graph Toolbar */}
-      <GraphToolbar />
-
-      {/* Instructions Panel */}
       <InstructionsPanel />
 
-      {/* Graph Canvas */}
       <GraphCanvas graphData={graphData} />
     </div>
   );

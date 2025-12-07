@@ -1,19 +1,16 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useMutation } from '@apollo/client/react';
 import { CREATE_ARTIST, CREATE_ALBUM, CREATE_SONG } from '../graphql/mutations';
 import { GET_GRAPH_DATA } from '../graphql/queries';
 
-const AddNodeForm = ({ onClose, onNodeCreated, embedded = false }) => {
+const AddNodeForm = ({ onNodeCreated }) => {
   const [nodeType, setNodeType] = useState('artist');
   const [formData, setFormData] = useState({
-    // Artist fields
     name: '',
     nationality: '',
     spotifyUrl: '',
-    // Album fields
     title: '',
     releaseYear: '',
-    // Song fields
     genre: ''
   });
 
@@ -37,7 +34,6 @@ const AddNodeForm = ({ onClose, onNodeCreated, embedded = false }) => {
 
   const handleNodeTypeChange = (e) => {
     setNodeType(e.target.value);
-    // Reset form data when changing node type
     setFormData({
       name: '',
       nationality: '',
@@ -82,7 +78,6 @@ const AddNodeForm = ({ onClose, onNodeCreated, embedded = false }) => {
         onNodeCreated(result);
       }
 
-      // Reset form
       setFormData({
         name: '',
         nationality: '',
@@ -92,11 +87,10 @@ const AddNodeForm = ({ onClose, onNodeCreated, embedded = false }) => {
         genre: ''
       });
 
-      alert(`${nodeType.charAt(0).toUpperCase() + nodeType.slice(1)} created successfully!`);
+      alert(`Węzeł ${nodeType.charAt(0).toUpperCase() + nodeType.slice(1)} utworzony.`);
       
     } catch (error) {
-      console.error('Error creating node:', error);
-      alert(`Error creating ${nodeType}: ${error.message}`);
+      alert(`Błąd podczas tworzenia  węzła${nodeType}: ${error.message}`);
     }
   };
 
@@ -107,7 +101,7 @@ const AddNodeForm = ({ onClose, onNodeCreated, embedded = false }) => {
           <>
             <div style={{ marginBottom: '15px' }}>
               <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-                Name *
+                Nazwa *
               </label>
               <input
                 type="text"
@@ -115,21 +109,21 @@ const AddNodeForm = ({ onClose, onNodeCreated, embedded = false }) => {
                 value={formData.name}
                 onChange={handleInputChange}
                 required
-                style={inputStyleBase}
-                placeholder="Enter artist name"
+                style={inputStyle}
+                placeholder="Podaj imię artysty"
               />
             </div>
             <div style={{ marginBottom: '15px' }}>
               <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-                Nationality
+                Narodowość
               </label>
               <input
                 type="text"
                 name="nationality"
                 value={formData.nationality}
                 onChange={handleInputChange}
-                style={inputStyleBase}
-                placeholder="e.g., USA, UK, Canada"
+                style={inputStyle}
+                placeholder="Np. USA, UK, Kanada"
               />
             </div>
             <div style={{ marginBottom: '15px' }}>
@@ -153,7 +147,7 @@ const AddNodeForm = ({ onClose, onNodeCreated, embedded = false }) => {
           <>
             <div style={{ marginBottom: '15px' }}>
               <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-                Title *
+                Tytuł *
               </label>
               <input
                 type="text"
@@ -162,12 +156,12 @@ const AddNodeForm = ({ onClose, onNodeCreated, embedded = false }) => {
                 onChange={handleInputChange}
                 required
                 style={inputStyle}
-                placeholder="Enter album title"
+                placeholder="Podaj tytuł albumu"
               />
             </div>
             <div style={{ marginBottom: '15px' }}>
               <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-                Release Year
+                Rok wydania
               </label>
               <input
                 type="number"
@@ -175,7 +169,7 @@ const AddNodeForm = ({ onClose, onNodeCreated, embedded = false }) => {
                 value={formData.releaseYear}
                 onChange={handleInputChange}
                 style={inputStyle}
-                placeholder="e.g., 2023"
+                placeholder="Np. 2023"
                 min="1900"
                 max={new Date().getFullYear() + 1}
               />
@@ -201,7 +195,7 @@ const AddNodeForm = ({ onClose, onNodeCreated, embedded = false }) => {
           <>
             <div style={{ marginBottom: '15px' }}>
               <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-                Title *
+                Tytuł *
               </label>
               <input
                 type="text"
@@ -210,12 +204,12 @@ const AddNodeForm = ({ onClose, onNodeCreated, embedded = false }) => {
                 onChange={handleInputChange}
                 required
                 style={inputStyle}
-                placeholder="Enter song title"
+                placeholder="Podaj tytuł piosenki"
               />
             </div>
             <div style={{ marginBottom: '15px' }}>
               <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-                Genre
+                Gatunek
               </label>
               <input
                 type="text"
@@ -223,7 +217,7 @@ const AddNodeForm = ({ onClose, onNodeCreated, embedded = false }) => {
                 value={formData.genre}
                 onChange={handleInputChange}
                 style={inputStyle}
-                placeholder="e.g., Rock, Pop, Jazz"
+                placeholder="Np. Rock, Pop, Jazz"
               />
             </div>
             <div style={{ marginBottom: '15px' }}>
@@ -256,48 +250,25 @@ const AddNodeForm = ({ onClose, onNodeCreated, embedded = false }) => {
     boxSizing: 'border-box'
   };
 
-  const containerStyle = embedded ? {
+  const containerStyle = {
     padding: '25px',
     height: '100%',
     backgroundColor: '#34495e',
     color: '#ecf0f1',
     overflow: 'auto'
-  } : {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    width: '100vw',
-    height: '100vh',
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1000
   };
 
-  const formContainerStyle = embedded ? {
+  const formContainerStyle = {
     width: '100%'
-  } : {
-    backgroundColor: 'white',
-    padding: '30px',
-    borderRadius: '8px',
-    width: '400px',
-    maxHeight: '80vh',
-    overflowY: 'auto',
-    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
   };
 
-  const titleStyle = embedded ? {
+  const titleStyle = {
     marginBottom: '20px',
     color: '#ecf0f1',
     fontSize: '20px'
-  } : {
-    marginBottom: '20px',
-    textAlign: 'center',
-    color: '#333'
   };
 
-  const inputStyleBase = embedded ? {
+  const inputStyleBase = {
     width: '100%',
     padding: '10px',
     border: '1px solid #4a5a6a',
@@ -306,38 +277,31 @@ const AddNodeForm = ({ onClose, onNodeCreated, embedded = false }) => {
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     color: '#2c3e50',
     boxSizing: 'border-box'
-  } : {
-    width: '100%',
-    padding: '10px',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    fontSize: '14px',
-    boxSizing: 'border-box'
   };
 
   return (
     <div style={containerStyle}>
       <div style={formContainerStyle}>
         <h2 style={titleStyle}>
-          Add New Node
+          Utwórz nowy węzeł
         </h2>
 
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: embedded ? '#ecf0f1' : '#333' }}>
-              Node Type *
+            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#ecf0f1' }}>
+              Typ węzła *
             </label>
             <select
               value={nodeType}
               onChange={handleNodeTypeChange}
               style={{
                 ...inputStyleBase,
-                backgroundColor: embedded ? 'rgba(255, 255, 255, 0.95)' : '#f8f9fa'
+                backgroundColor: 'rgba(255, 255, 255, 0.95)'
               }}
             >
-              <option value="artist">Artist</option>
+              <option value="artist">Artysta</option>
               <option value="album">Album</option>
-              <option value="song">Song</option>
+              <option value="song">Piosenka</option>
             </select>
           </div>
 
@@ -347,30 +311,14 @@ const AddNodeForm = ({ onClose, onNodeCreated, embedded = false }) => {
             display: 'flex', 
             gap: '10px', 
             marginTop: '25px',
-            justifyContent: embedded ? 'stretch' : 'flex-end'
+            justifyContent: 'stretch'
           }}>
-            {!embedded && onClose && (
-              <button
-                type="button"
-                onClick={onClose}
-                style={{
-                  padding: '10px 20px',
-                  border: '1px solid #ccc',
-                  backgroundColor: '#f8f9fa',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontSize: '14px'
-                }}
-              >
-                Cancel
-              </button>
-            )}
             <button
               type="submit"
               style={{
-                flex: embedded ? '1' : 'none',
+                flex: '1',
                 padding: '12px 20px',
-                backgroundColor: embedded ? '#27ae60' : '#007bff',
+                backgroundColor: '#27ae60',
                 color: 'white',
                 border: 'none',
                 borderRadius: '6px',
@@ -379,7 +327,7 @@ const AddNodeForm = ({ onClose, onNodeCreated, embedded = false }) => {
                 fontWeight: 'bold'
               }}
             >
-              ➕ Create {nodeType.charAt(0).toUpperCase() + nodeType.slice(1)}
+              Utwórz
             </button>
           </div>
         </form>

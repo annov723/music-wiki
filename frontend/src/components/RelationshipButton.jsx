@@ -24,12 +24,13 @@ const RelationshipButton = () => {
             fontSize: '14px',
             fontWeight: 'bold',
             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
-            transition: 'background-color 0.2s'
+            transition: 'background-color 0.2s',
+            width: '150px'
           }}
           onMouseEnter={(e) => e.target.style.backgroundColor = '#218838'}
           onMouseLeave={(e) => e.target.style.backgroundColor = '#28a745'}
         >
-          Dodaj relację
+          Dodaj krawędź
         </button>
       </div>
 

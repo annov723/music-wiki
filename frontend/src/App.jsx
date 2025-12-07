@@ -101,8 +101,7 @@ function App() {
               />
             ) : (
               <div className="add-node-container">
-                <AddNodeForm 
-                  embedded={true}
+                <AddNodeForm
                   onNodeCreated={(result) => {
                     console.log('Węzeł utworzony:', result);
                   }}
