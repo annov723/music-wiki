@@ -4,34 +4,34 @@ import {
   GET_ALL_ARTISTS, 
   GET_ALL_ALBUMS, 
   GET_ALL_SONGS,
-  CONNECT_ARTIST_TO_ALBUM,
-  CONNECT_ARTIST_TO_SONG,
-  CONNECT_ALBUM_TO_SONG,
-  CONNECT_SONG_TO_ALBUM
+  DISCONNECT_ARTIST_FROM_ALBUM,
+  DISCONNECT_ARTIST_FROM_SONG,
+  DISCONNECT_ALBUM_FROM_SONG,
+  DISCONNECT_SONG_FROM_ALBUM
 } from '../graphql/mutations';
 import { GET_GRAPH_DATA } from '../graphql/queries';
 
-const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
-  const [relationshipType, setRelationshipType] = useState('RELEASED'); // RELEASED, PERFORMED, CONTAINS
+const RemoveRelationshipForm = ({ onClose, onRelationshipRemoved }) => {
+  const [relationshipType, setRelationshipType] = useState('RELEASED');
   const [sourceNode, setSourceNode] = useState('');
   const [targetNode, setTargetNode] = useState('');
 
-  // Fetch all nodes for dropdowns
+  // Fetch all nodes
   const { data: artistsData } = useQuery(GET_ALL_ARTISTS);
   const { data: albumsData } = useQuery(GET_ALL_ALBUMS);
   const { data: songsData } = useQuery(GET_ALL_SONGS);
 
-  // Mutations
-  const [connectArtistToAlbum] = useMutation(CONNECT_ARTIST_TO_ALBUM, {
+  // Disconnect mutations
+  const [disconnectArtistFromAlbum] = useMutation(DISCONNECT_ARTIST_FROM_ALBUM, {
     refetchQueries: [{ query: GET_GRAPH_DATA }]
   });
-  const [connectArtistToSong] = useMutation(CONNECT_ARTIST_TO_SONG, {
+  const [disconnectArtistFromSong] = useMutation(DISCONNECT_ARTIST_FROM_SONG, {
     refetchQueries: [{ query: GET_GRAPH_DATA }]
   });
-  const [connectAlbumToSong] = useMutation(CONNECT_ALBUM_TO_SONG, {
+  const [disconnectAlbumFromSong] = useMutation(DISCONNECT_ALBUM_FROM_SONG, {
     refetchQueries: [{ query: GET_GRAPH_DATA }]
   });
-  const [connectSongToAlbum] = useMutation(CONNECT_SONG_TO_ALBUM, {
+  const [disconnectSongFromAlbum] = useMutation(DISCONNECT_SONG_FROM_ALBUM, {
     refetchQueries: [{ query: GET_GRAPH_DATA }]
   });
 
@@ -41,21 +41,21 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
         label: 'Artist RELEASED Album',
         sourceType: 'artist',
         targetType: 'album',
-        description: 'Connect an artist to an album (Album can have only ONE artist)',
+        description: 'Remove connection between artist and album',
         icon: '🎵'
       },
       'PERFORMED': {
         label: 'Artist PERFORMED Song',
         sourceType: 'artist',
         targetType: 'song',
-        description: 'Connect an artist to a song (Song can have multiple artists)',
+        description: 'Remove connection between artist and song',
         icon: '🎤'
       },
       'CONTAINS': {
         label: 'Album CONTAINS Song',
         sourceType: 'album',
         targetType: 'song',
-        description: 'Connect an album to a song (Song belongs to ONE album)',
+        description: 'Remove song from album',
         icon: '💿'
       }
     };
@@ -88,88 +88,62 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
       return;
     }
 
-    // Validation for RELEASED relationship (Album can only have one artist)
-    if (relationshipType === 'RELEASED') {
-      const selectedAlbum = albumsData?.albums?.find(a => a.id === targetNode);
-      if (selectedAlbum && selectedAlbum.artist && selectedAlbum.artist.length > 0) {
-        const currentArtist = selectedAlbum.artist[0];
-        if (currentArtist.id !== sourceNode) {
-          alert(`This album already has artist "${currentArtist.name}". An album can only have one artist.`);
-          return;
-        }
-      }
-    }
-
-    // Validation for CONTAINS relationship (Song can only belong to one album)
-    if (relationshipType === 'CONTAINS') {
-      const selectedSong = songsData?.songs?.find(s => s.id === targetNode);
-      if (selectedSong && selectedSong.album && selectedSong.album.length > 0) {
-        const currentAlbum = selectedSong.album[0];
-        if (currentAlbum.id !== sourceNode) {
-          alert(`This song is already in album "${currentAlbum.title}". A song can only belong to one album.`);
-          return;
-        }
-      }
-    }
-
     try {
       let result;
-      const rules = getRelationshipRules();
-      const rule = rules[relationshipType];
 
       if (relationshipType === 'RELEASED') {
         // Artist -> Album
-        result = await connectArtistToAlbum({
+        result = await disconnectArtistFromAlbum({
           variables: {
             where: { id: { in: [sourceNode] } },
             update: {
-              albums: [{ connect: [{ where: { node: { id: { in: [targetNode] } } } }] }]
+              albums: [{ disconnect: [{ where: { node: { id: { in: [targetNode] } } } }] }]
             }
           }
         });
       } else if (relationshipType === 'PERFORMED') {
         // Artist -> Song
-        result = await connectArtistToSong({
+        result = await disconnectArtistFromSong({
           variables: {
             where: { id: { in: [sourceNode] } },
             update: {
-              songs: [{ connect: [{ where: { node: { id: { in: [targetNode] } } } }] }]
+              songs: [{ disconnect: [{ where: { node: { id: { in: [targetNode] } } } }] }]
             }
           }
         });
       } else if (relationshipType === 'CONTAINS') {
-        // Album -> Song (connect from both sides)
-        result = await connectAlbumToSong({
+        // Album -> Song (disconnect from both sides)
+        result = await disconnectAlbumFromSong({
           variables: {
             where: { id: { in: [sourceNode] } },
             update: {
-              songs: [{ connect: [{ where: { node: { id: { in: [targetNode] } } } }] }]
+              songs: [{ disconnect: [{ where: { node: { id: { in: [targetNode] } } } }] }]
             }
           }
         });
         
-        // Also connect from song to album (since song belongs to one album)
-        await connectSongToAlbum({
+        // Also disconnect from song to album
+        await disconnectSongFromAlbum({
           variables: {
             where: { id: { in: [targetNode] } },
             update: {
-              album: [{ connect: [{ where: { node: { id: { in: [sourceNode] } } } }] }]
+              album: [{ disconnect: [{ where: { node: { id: { in: [sourceNode] } } } }] }]
             }
           }
         });
       }
 
-      if (onRelationshipCreated) {
-        onRelationshipCreated(result);
+      if (onRelationshipRemoved) {
+        onRelationshipRemoved(result);
       }
 
-      alert(`Relationship created successfully!`);
+      alert(`Relationship removed successfully!`);
       setSourceNode('');
       setTargetNode('');
 
     } catch (error) {
-      console.error('Error creating relationship:', error);
-      alert(`Error creating relationship: ${error.message}`);
+      console.error('Error removing relationship:', error);
+      alert(`Error removing relationship: ${error.message}`);
     }
   };
 
@@ -209,25 +183,21 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
         overflowY: 'auto',
         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
       }}>
-        <h2 style={{ marginBottom: '20px', textAlign: 'center', color: '#333' }}>
-          Create Relationship
+        <h2 style={{ marginBottom: '20px', textAlign: 'center', color: '#d32f2f' }}>
+          🗑️ Remove Relationship
         </h2>
 
-        {/* Relationship Rules Summary */}
+        {/* Warning message */}
         <div style={{ 
           marginBottom: '20px',
           padding: '12px',
-          backgroundColor: '#f8f9fa',
+          backgroundColor: '#fff3cd',
           borderRadius: '6px',
           fontSize: '12px',
-          color: '#495057'
+          color: '#856404',
+          borderLeft: '4px solid #ffc107'
         }}>
-          <strong>Relationship Rules:</strong>
-          <ul style={{ margin: '8px 0 0 0', paddingLeft: '18px' }}>
-            <li>🎤 <strong>Artist</strong>: Can have many albums and many songs</li>
-            <li>💿 <strong>Album</strong>: Has ONE artist and many songs</li>
-            <li>🎵 <strong>Song</strong>: Belongs to ONE album, can have many artists</li>
-          </ul>
+          <strong>⚠️ Warning:</strong> This will permanently remove the connection between the selected nodes.
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -254,9 +224,9 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
               color: '#666', 
               marginTop: '5px',
               padding: '8px',
-              backgroundColor: '#e3f2fd',
+              backgroundColor: '#ffebee',
               borderRadius: '4px',
-              borderLeft: '4px solid #2196f3'
+              borderLeft: '4px solid #f44336'
             }}>
               💡 {currentRule.description}
             </div>
@@ -275,7 +245,7 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
               <option value="">Select {currentRule.sourceType}...</option>
               {sourceNodes.map((node) => (
                 <option key={node.id} value={node.id}>
-                  {node.name || node.title} (ID: {node.id})
+                  {node.name || node.title}
                 </option>
               ))}
             </select>
@@ -286,9 +256,9 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
             margin: '15px 0',
             fontSize: '18px',
             fontWeight: 'bold',
-            color: '#007bff'
+            color: '#d32f2f'
           }}>
-            {relationshipType}
+            ❌ {relationshipType}
             <div style={{ fontSize: '12px', color: '#666' }}>↓</div>
           </div>
 
@@ -305,42 +275,21 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
               <option value="">Select {currentRule.targetType}...</option>
               {targetNodes.map((node) => (
                 <option key={node.id} value={node.id}>
-                  {node.name || node.title} (ID: {node.id})
+                  {node.name || node.title}
                 </option>
               ))}
             </select>
           </div>
 
-          <div style={{
-            backgroundColor: '#f8f9fa',
-            padding: '15px',
-            borderRadius: '4px',
-            marginBottom: '20px',
-            border: '1px solid #e9ecef'
-          }}>
-            <h4 style={{ margin: '0 0 10px 0', color: '#495057' }}>Schema Rules:</h4>
-            <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '14px', color: '#666' }}>
-              <li>Artists can RELEASE multiple Albums (collaboration albums)</li>
-              <li>Artists can PERFORM multiple Songs (features, collaborations)</li>
-              <li>Albums can CONTAIN multiple Songs</li>
-              <li>Songs MUST belong to exactly one Album</li>
-            </ul>
-          </div>
-
-          <div style={{ 
-            display: 'flex', 
-            gap: '10px', 
-            marginTop: '25px',
-            justifyContent: 'flex-end'
-          }}>
+          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
             <button
               type="button"
               onClick={onClose}
               style={{
                 padding: '10px 20px',
-                border: '1px solid #ccc',
-                backgroundColor: '#f8f9fa',
+                border: '1px solid #ddd',
                 borderRadius: '4px',
+                backgroundColor: 'white',
                 cursor: 'pointer',
                 fontSize: '14px'
               }}
@@ -351,15 +300,16 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
               type="submit"
               style={{
                 padding: '10px 20px',
-                backgroundColor: '#28a745',
-                color: 'white',
                 border: 'none',
                 borderRadius: '4px',
+                backgroundColor: '#d32f2f',
+                color: 'white',
                 cursor: 'pointer',
-                fontSize: '14px'
+                fontSize: '14px',
+                fontWeight: 'bold'
               }}
             >
-              Create Relationship
+              🗑️ Remove Relationship
             </button>
           </div>
         </form>
@@ -368,4 +318,4 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
   );
 };
 
-export default AddRelationshipForm;
+export default RemoveRelationshipForm;

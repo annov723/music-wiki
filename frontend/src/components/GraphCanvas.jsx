@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
 import RelationshipButton from './RelationshipButton';
+import RemoveRelationshipButton from './RemoveRelationshipButton';
 
 const GraphCanvas = ({ graphData, onNodeClick, selectedNode }) => {
   const fgRef = useRef();
@@ -79,6 +80,7 @@ const GraphCanvas = ({ graphData, onNodeClick, selectedNode }) => {
       }}
     >
       <RelationshipButton />
+      <RemoveRelationshipButton />
       
       <ForceGraph2D
         ref={fgRef}

@@ -30,8 +30,8 @@ export const GET_GRAPH_DATA = gql`
           }
         }
         
-        # Get all artists who released this album (for collaborations)
-        artists {
+        # Get the artist who released this album (one artist per album)
+        artist {
           id
           name
         }
@@ -64,8 +64,8 @@ export const GET_GRAPH_DATA = gql`
       title
       releaseYear
       
-      # Artists who released this album
-      artists {
+      # Artist who released this album (only one)
+      artist {
         id
         name
       }
@@ -215,14 +215,13 @@ export const transformDataForGraph = (data) => {
         releaseYear: album.releaseYear
       });
 
-      // Process album artists
-      if (album.artists) {
-        album.artists.forEach(artist => {
-          addNode(artist.id, 'artist', {
-            name: artist.name
-          });
-          addLink(artist.id, album.id, 'RELEASED');
+      // Process album artist (single artist per album)
+      if (album.artist && album.artist.length > 0) {
+        const artist = album.artist[0]; // Album can only have one artist
+        addNode(artist.id, 'artist', {
+          name: artist.name
         });
+        addLink(artist.id, album.id, 'RELEASED');
       }
 
       // Process album songs

@@ -125,14 +125,13 @@ export const transformData = (data) => {
         releaseYear: album.releaseYear
       });
 
-      // Process album artists
-      if (album.artists) {
-        album.artists.forEach(artist => {
-          addNode(artist.id, 'artist', {
-            name: artist.name
-          });
-          addLink(artist.id, album.id, 'RELEASED');
+      // Process album artist (single artist per album)
+      if (album.artist && album.artist.length > 0) {
+        const artist = album.artist[0]; // Album can only have one artist
+        addNode(artist.id, 'artist', {
+          name: artist.name
         });
+        addLink(artist.id, album.id, 'RELEASED');
       }
 
       // Process album songs

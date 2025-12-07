@@ -20,8 +20,8 @@ const typeDefs = `
         id: ID! @id
         title: String!
         releaseYear: Int
-        # Relationships
-        artists: [Artist!]! @relationship(type: "RELEASED", direction: IN)
+        # Relationships - Album has ONE artist and many songs
+        artist: [Artist!]! @relationship(type: "RELEASED", direction: IN)
         songs: [Song!]! @relationship(type: "CONTAINS", direction: OUT)
     }
 
@@ -30,9 +30,8 @@ const typeDefs = `
         title: String!
         genre: String
         spotifyUrl: String
-        # Relationships
+        # Relationships - Song belongs to ONE album and can have many artists
         artists: [Artist!]! @relationship(type: "PERFORMED", direction: IN)
-        # Note: Song belongs to only one album, using array syntax as required by @neo4j/graphql
         album: [Album!]! @relationship(type: "CONTAINS", direction: IN)
     }
 `;

@@ -100,6 +100,67 @@ export const CONNECT_SONG_TO_ALBUM = gql`
   }
 `;
 
+// Mutations for removing relationships between nodes
+export const DISCONNECT_ARTIST_FROM_ALBUM = gql`
+  mutation DisconnectArtistFromAlbum($where: ArtistWhere, $update: ArtistUpdateInput) {
+    updateArtists(where: $where, update: $update) {
+      artists {
+        id
+        name
+        albums {
+          id
+          title
+        }
+      }
+    }
+  }
+`;
+
+export const DISCONNECT_ARTIST_FROM_SONG = gql`
+  mutation DisconnectArtistFromSong($where: ArtistWhere, $update: ArtistUpdateInput) {
+    updateArtists(where: $where, update: $update) {
+      artists {
+        id
+        name
+        songs {
+          id
+          title
+        }
+      }
+    }
+  }
+`;
+
+export const DISCONNECT_ALBUM_FROM_SONG = gql`
+  mutation DisconnectAlbumFromSong($where: AlbumWhere, $update: AlbumUpdateInput) {
+    updateAlbums(where: $where, update: $update) {
+      albums {
+        id
+        title
+        songs {
+          id
+          title
+        }
+      }
+    }
+  }
+`;
+
+export const DISCONNECT_SONG_FROM_ALBUM = gql`
+  mutation DisconnectSongFromAlbum($where: SongWhere, $update: SongUpdateInput) {
+    updateSongs(where: $where, update: $update) {
+      songs {
+        id
+        title
+        album {
+          id
+          title
+        }
+      }
+    }
+  }
+`;
+
 // Get all nodes for relationship dropdowns
 export const GET_ALL_ARTISTS = gql`
   query GetAllArtists {
@@ -115,6 +176,10 @@ export const GET_ALL_ALBUMS = gql`
     albums {
       id
       title
+      artist {
+        id
+        name
+      }
     }
   }
 `;
