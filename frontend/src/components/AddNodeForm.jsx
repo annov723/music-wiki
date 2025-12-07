@@ -180,6 +180,19 @@ const AddNodeForm = ({ onClose, onNodeCreated, embedded = false }) => {
                 max={new Date().getFullYear() + 1}
               />
             </div>
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+                Spotify URL
+              </label>
+              <input
+                type="url"
+                name="spotifyUrl"
+                value={formData.spotifyUrl}
+                onChange={handleInputChange}
+                style={inputStyle}
+                placeholder="https://open.spotify.com/album/..."
+              />
+            </div>
           </>
         );
         

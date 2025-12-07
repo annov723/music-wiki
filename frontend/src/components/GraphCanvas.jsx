@@ -3,7 +3,7 @@ import ForceGraph2D from 'react-force-graph-2d';
 import RelationshipButton from './RelationshipButton';
 import RemoveRelationshipButton from './RemoveRelationshipButton';
 
-const GraphCanvas = ({ graphData, onNodeClick, selectedNode }) => {
+const GraphCanvas = ({ graphData, onNodeClick, selectedNode, searchTerm = '' }) => {
   const fgRef = useRef();
   const containerRef = useRef();
   const [dimensions, setDimensions] = useState({
@@ -11,17 +11,43 @@ const GraphCanvas = ({ graphData, onNodeClick, selectedNode }) => {
     height: 600
   });
 
+  // Check if node matches search term
+  const nodeMatchesSearch = (node) => {
+    if (!searchTerm.trim()) return true;
+    const search = searchTerm.toLowerCase();
+    
+    // Search in all node properties
+    const searchableText = [
+      node.name,
+      node.title,
+      node.label,
+      node.genre,
+      node.nationality,
+      node.releaseYear,
+      node.spotifyUrl
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase();
+    
+    return searchableText.includes(search);
+  };
+
   // Color scheme based on node group
   const getNodeColor = (node) => {
+    // Dim non-matching nodes when searching
+    const isMatch = nodeMatchesSearch(node);
+    const alpha = searchTerm.trim() && !isMatch ? '40' : 'ff';
+    
     switch (node.group) {
       case 1: // Artists
-        return '#ff6b6b';
+        return '#ff6b6b' + alpha;
       case 2: // Albums
-        return '#4ecdc4';
+        return '#4ecdc4' + alpha;
       case 3: // Songs
-        return '#45b7d1';
+        return '#45b7d1' + alpha;
       default:
-        return '#95a5a6';
+        return '#95a5a6' + alpha;
     }
   };
 
@@ -41,15 +67,18 @@ const GraphCanvas = ({ graphData, onNodeClick, selectedNode }) => {
 
   // Node size based on type
   const getNodeSize = (node) => {
+    const isMatch = nodeMatchesSearch(node);
+    const sizeMultiplier = searchTerm.trim() && isMatch ? 1.5 : 1;
+    
     switch (node.group) {
       case 1: // Artists
-        return 8;
+        return 8 * sizeMultiplier;
       case 2: // Albums
-        return 6;
+        return 6 * sizeMultiplier;
       case 3: // Songs
-        return 4;
+        return 4 * sizeMultiplier;
       default:
-        return 3;
+        return 3 * sizeMultiplier;
     }
   };
 
@@ -67,6 +96,17 @@ const GraphCanvas = ({ graphData, onNodeClick, selectedNode }) => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Zoom to first matching node when searching
+  useEffect(() => {
+    if (searchTerm.trim() && fgRef.current && graphData.nodes.length > 0) {
+      const matchingNode = graphData.nodes.find(node => nodeMatchesSearch(node));
+      if (matchingNode) {
+        fgRef.current.centerAt(matchingNode.x, matchingNode.y, 1000);
+        fgRef.current.zoom(3, 1000);
+      }
+    }
+  }, [searchTerm]);
 
   return (
     <div 

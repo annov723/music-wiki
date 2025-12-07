@@ -20,6 +20,7 @@ const typeDefs = `
         id: ID! @id
         title: String!
         releaseYear: Int
+        spotifyUrl: String
         # Relationships - Album has ONE artist and many songs
         artist: [Artist!]! @relationship(type: "RELEASED", direction: IN)
         songs: [Song!]! @relationship(type: "CONTAINS", direction: OUT)

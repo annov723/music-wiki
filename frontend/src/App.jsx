@@ -92,6 +92,7 @@ function App() {
             graphData={graphData} 
             onNodeClick={setSelectedNode}
             selectedNode={selectedNode}
+            searchTerm={searchTerm}
           />
         </div>
 

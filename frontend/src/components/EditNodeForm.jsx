@@ -253,8 +253,15 @@ const EditNodeForm = ({ node, onClose, onNodeUpdated }) => {
                 <div style={{ marginBottom: '8px' }}>
                   <strong>Title:</strong> {formData.title || 'N/A'}
                 </div>
-                <div>
+                <div style={{ marginBottom: '8px' }}>
                   <strong>Release Year:</strong> {formData.releaseYear || 'N/A'}
+                </div>
+                <div>
+                  <strong>Spotify URL:</strong> {formData.spotifyUrl ? (
+                    <a href={formData.spotifyUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#1db954' }}>
+                      Open in Spotify
+                    </a>
+                  ) : 'N/A'}
                 </div>
               </>
             )}
@@ -365,6 +372,19 @@ const EditNodeForm = ({ node, onClose, onNodeUpdated }) => {
                 style={inputStyle}
                 min="1900"
                 max={new Date().getFullYear() + 1}
+              />
+            </div>
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#ecf0f1' }}>
+                Spotify URL
+              </label>
+              <input
+                type="url"
+                name="spotifyUrl"
+                value={formData.spotifyUrl || ''}
+                onChange={handleInputChange}
+                style={inputStyle}
+                placeholder="https://open.spotify.com/album/..."
               />
             </div>
           </>
