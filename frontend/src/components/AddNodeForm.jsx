@@ -110,7 +110,7 @@ const AddNodeForm = ({ onNodeCreated }) => {
                 onChange={handleInputChange}
                 required
                 style={inputStyle}
-                placeholder="Podaj imię artysty"
+                placeholder="Podaj nazwę artysty"
               />
             </div>
             <div style={{ marginBottom: '15px' }}>
@@ -170,7 +170,6 @@ const AddNodeForm = ({ onNodeCreated }) => {
                 onChange={handleInputChange}
                 style={inputStyle}
                 placeholder="Np. 2023"
-                min="1900"
                 max={new Date().getFullYear() + 1}
               />
             </div>
@@ -316,16 +315,20 @@ const AddNodeForm = ({ onNodeCreated }) => {
             <button
               type="submit"
               style={{
-                flex: '1',
-                padding: '12px 20px',
-                backgroundColor: '#27ae60',
+                padding: '12px 18px',
+                backgroundColor: '#28a745',
                 color: 'white',
                 border: 'none',
                 borderRadius: '6px',
                 cursor: 'pointer',
                 fontSize: '14px',
-                fontWeight: 'bold'
+                fontWeight: 'bold',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+                transition: 'background-color 0.2s',
+                flex: 1
               }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#218838'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#28a745'}
             >
               Utwórz
             </button>

@@ -340,30 +340,42 @@ const RemoveRelationshipForm = ({ onClose, onRelationshipRemoved }) => {
               type="button"
               onClick={onClose}
               style={{
-                padding: '10px 20px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                backgroundColor: 'white',
+                padding: '12px 18px',
+                backgroundColor: '#d32f2f',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
                 cursor: 'pointer',
-                fontSize: '14px'
+                fontSize: '14px',
+                fontWeight: 'bold',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+                transition: 'background-color 0.2s',
+                width: '150px'
               }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#c62828'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#d32f2f'}
             >
-              Cancel
+              Anuluj
             </button>
             <button
               type="submit"
               style={{
-                padding: '10px 20px',
-                border: 'none',
-                borderRadius: '4px',
-                backgroundColor: '#d32f2f',
+                padding: '12px 18px',
+                backgroundColor: '#28a745',
                 color: 'white',
+                border: 'none',
+                borderRadius: '6px',
                 cursor: 'pointer',
                 fontSize: '14px',
-                fontWeight: 'bold'
+                fontWeight: 'bold',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+                transition: 'background-color 0.2s',
+                width: '150px'
               }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#218838'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#28a745'}
             >
-              🗑️ Remove Relationship
+              Usuń krawędź
             </button>
           </div>
         </form>

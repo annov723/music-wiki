@@ -3,7 +3,6 @@ import { useMutation } from '@apollo/client/react';
 import { gql } from '@apollo/client/core';
 import { GET_GRAPH_DATA } from '../graphql/queries';
 
-// Update mutations for each node type
 const UPDATE_ARTIST = gql`
   mutation UpdateArtist($where: ArtistWhere, $update: ArtistUpdateInput) {
     updateArtists(where: $where, update: $update) {
@@ -42,7 +41,6 @@ const UPDATE_SONG = gql`
   }
 `;
 
-// Delete mutations
 const DELETE_ARTIST = gql`
   mutation DeleteArtist($where: ArtistWhere) {
     deleteArtists(where: $where) {
@@ -71,7 +69,7 @@ const EditNodeForm = ({ node, onClose, onNodeUpdated }) => {
   const [formData, setFormData] = useState({});
   const [isEditing, setIsEditing] = useState(false);
 
-  // Mutations
+
   const [updateArtist] = useMutation(UPDATE_ARTIST, {
     refetchQueries: [{ query: GET_GRAPH_DATA }]
   });
@@ -159,12 +157,12 @@ const EditNodeForm = ({ node, onClose, onNodeUpdated }) => {
       
     } catch (error) {
       console.error('Error updating node:', error);
-      alert(`Error updating ${node.type}: ${error.message}`);
+      alert(`Błąd podczas aktualizacji węzła ${node.type}: ${error.message}`);
     }
   };
 
   const handleDelete = async () => {
-    if (!window.confirm(`Are you sure you want to delete this ${node.type}?`)) {
+    if (!window.confirm(`Czy na pewno chcesz usunąć ten węzeł?`)) {
       return;
     }
 
@@ -177,12 +175,12 @@ const EditNodeForm = ({ node, onClose, onNodeUpdated }) => {
         await deleteSong({ variables: { where: { id: { in: [node.id] } } } });
       }
 
-      alert(`${node.type.charAt(0).toUpperCase() + node.type.slice(1)} deleted successfully!`);
+      alert(`${node.type.charAt(0).toUpperCase() + node.type.slice(1)} usunięty.`);
       onClose();
       
     } catch (error) {
       console.error('Error deleting node:', error);
-      alert(`Error deleting ${node.type}: ${error.message}`);
+      alert(`Błąd podczas usuwania węzła ${node.type}: ${error.message}`);
     }
   };
 
@@ -222,27 +220,24 @@ const EditNodeForm = ({ node, onClose, onNodeUpdated }) => {
             <h3 style={{ margin: 0, fontSize: '18px' }}>
               {formData.name || formData.title}
             </h3>
-            <p style={{ margin: 0, fontSize: '14px', opacity: 0.9 }}>
-              {node.type.charAt(0).toUpperCase() + node.type.slice(1)}
-            </p>
           </div>
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <strong style={{ color: '#ecf0f1' }}>Details:</strong>
+          <strong style={{ color: '#ecf0f1' }}>Szczegóły:</strong>
           <div style={{ marginTop: '10px', padding: '15px', backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '6px' }}>
             {node.type === 'artist' && (
               <>
                 <div style={{ marginBottom: '8px' }}>
-                  <strong>Name:</strong> {formData.name || 'N/A'}
+                  <strong>Nazwa:</strong> {formData.name || 'N/A'}
                 </div>
                 <div style={{ marginBottom: '8px' }}>
-                  <strong>Nationality:</strong> {formData.nationality || 'N/A'}
+                  <strong>Narodowość:</strong> {formData.nationality || 'N/A'}
                 </div>
                 <div>
                   <strong>Spotify URL:</strong> {formData.spotifyUrl ? (
                     <a href={formData.spotifyUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#1db954' }}>
-                      Open in Spotify
+                      Otwórz w Spotify
                     </a>
                   ) : 'N/A'}
                 </div>
@@ -251,15 +246,15 @@ const EditNodeForm = ({ node, onClose, onNodeUpdated }) => {
             {node.type === 'album' && (
               <>
                 <div style={{ marginBottom: '8px' }}>
-                  <strong>Title:</strong> {formData.title || 'N/A'}
+                  <strong>Tytuł:</strong> {formData.title || 'N/A'}
                 </div>
                 <div style={{ marginBottom: '8px' }}>
-                  <strong>Release Year:</strong> {formData.releaseYear || 'N/A'}
+                  <strong>Rok wydania:</strong> {formData.releaseYear || 'N/A'}
                 </div>
                 <div>
                   <strong>Spotify URL:</strong> {formData.spotifyUrl ? (
                     <a href={formData.spotifyUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#1db954' }}>
-                      Open in Spotify
+                      Otwórz w Spotify
                     </a>
                   ) : 'N/A'}
                 </div>
@@ -268,15 +263,15 @@ const EditNodeForm = ({ node, onClose, onNodeUpdated }) => {
             {node.type === 'song' && (
               <>
                 <div style={{ marginBottom: '8px' }}>
-                  <strong>Title:</strong> {formData.title || 'N/A'}
+                  <strong>Tytuł:</strong> {formData.title || 'N/A'}
                 </div>
                 <div style={{ marginBottom: '8px' }}>
-                  <strong>Genre:</strong> {formData.genre || 'N/A'}
+                  <strong>Gatunek:</strong> {formData.genre || 'N/A'}
                 </div>
                 <div>
                   <strong>Spotify URL:</strong> {formData.spotifyUrl ? (
                     <a href={formData.spotifyUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#1db954' }}>
-                      Open in Spotify
+                      Otwórz w Spotify
                     </a>
                   ) : 'N/A'}
                 </div>
@@ -306,7 +301,7 @@ const EditNodeForm = ({ node, onClose, onNodeUpdated }) => {
           <>
             <div style={{ marginBottom: '15px' }}>
               <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#ecf0f1' }}>
-                Name *
+                Nazwa *
               </label>
               <input
                 type="text"
@@ -315,11 +310,12 @@ const EditNodeForm = ({ node, onClose, onNodeUpdated }) => {
                 onChange={handleInputChange}
                 required
                 style={inputStyle}
+                placeholder="Podaj nazwę artysty"
               />
             </div>
             <div style={{ marginBottom: '15px' }}>
               <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#ecf0f1' }}>
-                Nationality
+                Narodowość
               </label>
               <input
                 type="text"
@@ -327,6 +323,7 @@ const EditNodeForm = ({ node, onClose, onNodeUpdated }) => {
                 value={formData.nationality || ''}
                 onChange={handleInputChange}
                 style={inputStyle}
+                placeholder="Np. USA, UK, Kanada"
               />
             </div>
             <div style={{ marginBottom: '15px' }}>
@@ -339,6 +336,7 @@ const EditNodeForm = ({ node, onClose, onNodeUpdated }) => {
                 value={formData.spotifyUrl || ''}
                 onChange={handleInputChange}
                 style={inputStyle}
+                placeholder="https://open.spotify.com/artist/..."
               />
             </div>
           </>
@@ -349,7 +347,7 @@ const EditNodeForm = ({ node, onClose, onNodeUpdated }) => {
           <>
             <div style={{ marginBottom: '15px' }}>
               <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#ecf0f1' }}>
-                Title *
+                Tytuł *
               </label>
               <input
                 type="text"
@@ -358,11 +356,12 @@ const EditNodeForm = ({ node, onClose, onNodeUpdated }) => {
                 onChange={handleInputChange}
                 required
                 style={inputStyle}
+                placeholder="Podaj tytuł albumu"
               />
             </div>
             <div style={{ marginBottom: '15px' }}>
               <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#ecf0f1' }}>
-                Release Year
+                Rok wydania
               </label>
               <input
                 type="number"
@@ -370,8 +369,8 @@ const EditNodeForm = ({ node, onClose, onNodeUpdated }) => {
                 value={formData.releaseYear || ''}
                 onChange={handleInputChange}
                 style={inputStyle}
-                min="1900"
                 max={new Date().getFullYear() + 1}
+                placeholder="Np. 2023"
               />
             </div>
             <div style={{ marginBottom: '15px' }}>
@@ -395,7 +394,7 @@ const EditNodeForm = ({ node, onClose, onNodeUpdated }) => {
           <>
             <div style={{ marginBottom: '15px' }}>
               <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#ecf0f1' }}>
-                Title *
+                Tytuł *
               </label>
               <input
                 type="text"
@@ -404,11 +403,12 @@ const EditNodeForm = ({ node, onClose, onNodeUpdated }) => {
                 onChange={handleInputChange}
                 required
                 style={inputStyle}
+                placeholder="Podaj tytuł piosenki"
               />
             </div>
             <div style={{ marginBottom: '15px' }}>
               <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#ecf0f1' }}>
-                Genre
+                Gatunek
               </label>
               <input
                 type="text"
@@ -416,6 +416,7 @@ const EditNodeForm = ({ node, onClose, onNodeUpdated }) => {
                 value={formData.genre || ''}
                 onChange={handleInputChange}
                 style={inputStyle}
+                placeholder="Np. Rock, Pop, Jazz"
               />
             </div>
             <div style={{ marginBottom: '15px' }}>
@@ -428,6 +429,7 @@ const EditNodeForm = ({ node, onClose, onNodeUpdated }) => {
                 value={formData.spotifyUrl || ''}
                 onChange={handleInputChange}
                 style={inputStyle}
+                placeholder="https://open.spotify.com/track/..."
               />
             </div>
           </>
@@ -457,7 +459,7 @@ const EditNodeForm = ({ node, onClose, onNodeUpdated }) => {
         marginBottom: '20px'
       }}>
         <h2 style={{ margin: 0, fontSize: '20px' }}>
-          {isEditing ? 'Edit Node' : 'Node Inspector'}
+          {isEditing ? 'Edytuj węzeł' : 'Dane węzła'}
         </h2>
         <button
           onClick={onClose}
@@ -491,34 +493,42 @@ const EditNodeForm = ({ node, onClose, onNodeUpdated }) => {
             <button
               onClick={() => setIsEditing(true)}
               style={{
-                flex: 1,
-                padding: '12px 20px',
-                backgroundColor: '#3498db',
+                padding: '12px 18px',
+                backgroundColor: '#28a745',
                 color: 'white',
                 border: 'none',
                 borderRadius: '6px',
                 cursor: 'pointer',
                 fontSize: '14px',
-                fontWeight: 'bold'
+                fontWeight: 'bold',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+                transition: 'background-color 0.2s',
+                width: '48%'
               }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#218838'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#28a745'}
             >
-              ✏️ Edit
+              Edytuj
             </button>
             <button
               onClick={handleDelete}
               style={{
-                flex: 1,
-                padding: '12px 20px',
-                backgroundColor: '#e74c3c',
+                padding: '12px 18px',
+                backgroundColor: '#d32f2f',
                 color: 'white',
                 border: 'none',
                 borderRadius: '6px',
                 cursor: 'pointer',
                 fontSize: '14px',
-                fontWeight: 'bold'
+                fontWeight: 'bold',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+                transition: 'background-color 0.2s',
+                width: '48%'
               }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#c62828'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#d32f2f'}
             >
-              🗑️ Delete
+              Usuń
             </button>
           </>
         ) : (
@@ -526,19 +536,23 @@ const EditNodeForm = ({ node, onClose, onNodeUpdated }) => {
             <button
               type="submit"
               onClick={handleSave}
-              style={{
-                flex: 1,
-                padding: '12px 20px',
-                backgroundColor: '#27ae60',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontSize: '14px',
-                fontWeight: 'bold'
-              }}
+                style={{
+                  padding: '12px 18px',
+                  backgroundColor: '#28a745',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+                  transition: 'background-color 0.2s',
+                  width: '48%'
+                }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#218838'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = '#28a745'}
             >
-              💾 Save
+              Zapisz
             </button>
             <button
               type="button"
@@ -547,18 +561,22 @@ const EditNodeForm = ({ node, onClose, onNodeUpdated }) => {
                 setIsEditing(false);
               }}
               style={{
-                flex: 1,
-                padding: '12px 20px',
-                backgroundColor: '#95a5a6',
+                padding: '12px 18px',
+                backgroundColor: '#d32f2f',
                 color: 'white',
                 border: 'none',
                 borderRadius: '6px',
                 cursor: 'pointer',
                 fontSize: '14px',
-                fontWeight: 'bold'
+                fontWeight: 'bold',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+                transition: 'background-color 0.2s',
+                width: '48%'
               }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#c62828'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#d32f2f'}
             >
-              ❌ Cancel
+              Anuluj
             </button>
           </>
         )}
