@@ -1,6 +1,5 @@
 import { gql } from '@apollo/client/core';
 
-// Mutations for creating nodes
 export const CREATE_ARTIST = gql`
   mutation CreateArtist($input: [ArtistCreateInput!]!) {
     createArtists(input: $input) {
@@ -39,7 +38,6 @@ export const CREATE_SONG = gql`
   }
 `;
 
-// Mutations for updating nodes to create relationships
 export const CONNECT_ARTIST_TO_ALBUM = gql`
   mutation ConnectArtistToAlbum($where: ArtistWhere, $update: ArtistUpdateInput) {
     updateArtists(where: $where, update: $update) {
@@ -100,7 +98,6 @@ export const CONNECT_SONG_TO_ALBUM = gql`
   }
 `;
 
-// Mutations for removing relationships between nodes
 export const DISCONNECT_ARTIST_FROM_ALBUM = gql`
   mutation DisconnectArtistFromAlbum($where: ArtistWhere, $update: ArtistUpdateInput) {
     updateArtists(where: $where, update: $update) {
@@ -161,7 +158,6 @@ export const DISCONNECT_SONG_FROM_ALBUM = gql`
   }
 `;
 
-// Get all nodes for relationship dropdowns
 export const GET_ALL_ARTISTS = gql`
   query GetAllArtists {
     artists {

@@ -75,16 +75,9 @@ npm run frontend
 
 Frontend aplikacji został zbudowany przy użyciu **React** oraz **Vite**. Do komunikacji z serwerem GraphQL wykorzystano bibliotekę **Apollo Client**. Wizualizacja grafu zrealizowana jest za pomocą **react-force-graph-2d**.
 
-### Główne komponenty:
-
-*   **`App.jsx`**: Główny komponent aplikacji, który zarządza stanem, pobiera dane z API i renderuje pozostałe komponenty.
-*   **`GraphCanvas.jsx`**: Odpowiada za renderowanie interaktywnego grafu relacji między artystami, albumami i utworami. Umożliwia interakcję z węzłami.
-*   **`GraphToolbar.jsx`**: Pasek narzędzi zawierający przyciski do dodawania nowych węzłów (artystów, albumów, piosenek) oraz relacji między nimi.
-*   **`AddNodeForm.jsx` / `EditNodeForm.jsx`**: Formularze służące do dodawania i edycji informacji o węzłach.
-*   **`AddRelationshipForm.jsx` / `RemoveRelationshipForm.jsx`**: Formularze do tworzenia i usuwania powiązań między węzłami.
-*   **`InstructionsPanel.jsx`**: Panel z instrukcjami dla użytkownika.
-
 ### Wykorzystane biblioteki:
 
 *   **`@apollo/client`** - klient GraphQL do pobierania danych z serwera Apollo i zarządzania stanem
 *   **`react-force-graph-2d`** - komponent do renderowania grafu, który wizualizuje dane w postaci węzłów i krawędzi
+
+

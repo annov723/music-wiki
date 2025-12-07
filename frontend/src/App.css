@@ -6,7 +6,6 @@
   overflow: hidden;
 }
 
-/* App Layout */
 .app-container {
   display: flex;
   flex-direction: column;
@@ -15,7 +14,6 @@
   background-color: #2c3e50;
 }
 
-/* Header Styles */
 .app-header {
   background: linear-gradient(135deg, #1a252f 0%, #2c3e50 100%);
   border-bottom: 2px solid #34495e;
@@ -41,7 +39,7 @@
 
 .search-container {
   flex: 0 1 400px;
-  max-width: 400px;
+  max-width: 350px;
 }
 
 .search-input {
@@ -67,7 +65,6 @@
   color: #7f8c8d;
 }
 
-/* Main Body Layout */
 .app-body {
   display: flex;
   flex: 1;
@@ -96,7 +93,6 @@
   padding: 0;
 }
 
-/* Graph Stats */
 .graph-stats {
   position: absolute;
   top: 15px;
@@ -151,12 +147,10 @@
   color: #45b7d1;
 }
 
-/* Embedded Add Node Form Styles */
 .add-node-container {
   height: 100%;
 }
 
-/* Responsive Design */
 @media (max-width: 1200px) {
   .sidebar-panel {
     width: 320px;
@@ -168,56 +162,6 @@
   
   .search-container {
     max-width: 300px;
-  }
-}
-
-@media (max-width: 768px) {
-  .app-body {
-    flex-direction: column;
-  }
-  
-  .sidebar-panel {
-    width: 100%;
-    height: 300px;
-    border-left: none;
-    border-top: 2px solid #34495e;
-  }
-  
-  .header-content {
-    flex-direction: column;
-    gap: 15px;
-    text-align: center;
-  }
-  
-  .search-container {
-    max-width: 100%;
-  }
-  
-  .app-title {
-    font-size: 22px;
-  }
-  
-  .graph-stats {
-    position: relative;
-    top: 0;
-    left: 0;
-    margin: 10px;
-    width: calc(100% - 20px);
-  }
-}
-
-@media (max-width: 480px) {
-  .header-content {
-    padding: 10px 15px;
-  }
-  
-  .app-title {
-    font-size: 20px;
-  }
-  
-  .search-input {
-    font-size: 14px;
-    padding: 10px 15px;
   }
 }
 
