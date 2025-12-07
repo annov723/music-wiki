@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client/react';
 import { 
   GET_ALL_ARTISTS, 
@@ -12,16 +12,14 @@ import {
 import { GET_GRAPH_DATA } from '../graphql/queries';
 
 const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
-  const [relationshipType, setRelationshipType] = useState('RELEASED'); // RELEASED, PERFORMED, CONTAINS
+  const [relationshipType, setRelationshipType] = useState('RELEASED');
   const [sourceNode, setSourceNode] = useState('');
   const [targetNode, setTargetNode] = useState('');
 
-  // Fetch all nodes for dropdowns
   const { data: artistsData } = useQuery(GET_ALL_ARTISTS);
   const { data: albumsData } = useQuery(GET_ALL_ALBUMS);
   const { data: songsData } = useQuery(GET_ALL_SONGS);
 
-  // Mutations
   const [connectArtistToAlbum] = useMutation(CONNECT_ARTIST_TO_ALBUM, {
     refetchQueries: [{ query: GET_GRAPH_DATA }]
   });
@@ -88,7 +86,6 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
       return;
     }
 
-    // Validation for RELEASED relationship (Album can only have one artist)
     if (relationshipType === 'RELEASED') {
       const selectedAlbum = albumsData?.albums?.find(a => a.id === targetNode);
       if (selectedAlbum && selectedAlbum.artist && selectedAlbum.artist.length > 0) {
@@ -100,7 +97,6 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
       }
     }
 
-    // Validation for CONTAINS relationship (Song can only belong to one album)
     if (relationshipType === 'CONTAINS') {
       const selectedSong = songsData?.songs?.find(s => s.id === targetNode);
       if (selectedSong && selectedSong.album && selectedSong.album.length > 0) {
@@ -118,7 +114,6 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
       const rule = rules[relationshipType];
 
       if (relationshipType === 'RELEASED') {
-        // Artist -> Album
         result = await connectArtistToAlbum({
           variables: {
             where: { id: { in: [sourceNode] } },
@@ -128,7 +123,6 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
           }
         });
       } else if (relationshipType === 'PERFORMED') {
-        // Artist -> Song
         result = await connectArtistToSong({
           variables: {
             where: { id: { in: [sourceNode] } },
@@ -138,7 +132,6 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
           }
         });
       } else if (relationshipType === 'CONTAINS') {
-        // Album -> Song (connect from both sides)
         result = await connectAlbumToSong({
           variables: {
             where: { id: { in: [sourceNode] } },
@@ -148,7 +141,6 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
           }
         });
         
-        // Also connect from song to album (since song belongs to one album)
         await connectSongToAlbum({
           variables: {
             where: { id: { in: [targetNode] } },
@@ -213,7 +205,6 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
           Create Relationship
         </h2>
 
-        {/* Relationship Rules Summary */}
         <div style={{ 
           marginBottom: '20px',
           padding: '12px',

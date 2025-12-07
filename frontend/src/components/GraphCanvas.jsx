@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
 import RelationshipButton from './RelationshipButton';
 import RemoveRelationshipButton from './RemoveRelationshipButton';
@@ -11,12 +11,10 @@ const GraphCanvas = ({ graphData, onNodeClick, selectedNode, searchTerm = '' }) 
     height: 600
   });
 
-  // Check if node matches search term
   const nodeMatchesSearch = (node) => {
     if (!searchTerm.trim()) return true;
     const search = searchTerm.toLowerCase();
     
-    // Search in all node properties
     const searchableText = [
       node.name,
       node.title,
@@ -33,25 +31,22 @@ const GraphCanvas = ({ graphData, onNodeClick, selectedNode, searchTerm = '' }) 
     return searchableText.includes(search);
   };
 
-  // Color scheme based on node group
   const getNodeColor = (node) => {
-    // Dim non-matching nodes when searching
     const isMatch = nodeMatchesSearch(node);
     const alpha = searchTerm.trim() && !isMatch ? '40' : 'ff';
     
     switch (node.group) {
-      case 1: // Artists
+      case 1: 
         return '#ff6b6b' + alpha;
-      case 2: // Albums
+      case 2: 
         return '#4ecdc4' + alpha;
-      case 3: // Songs
+      case 3: 
         return '#45b7d1' + alpha;
       default:
         return '#95a5a6' + alpha;
     }
   };
 
-  // Link color based on relationship type
   const getLinkColor = (link) => {
     switch (link.type) {
       case 'RELEASED':
@@ -65,17 +60,16 @@ const GraphCanvas = ({ graphData, onNodeClick, selectedNode, searchTerm = '' }) 
     }
   };
 
-  // Node size based on type
   const getNodeSize = (node) => {
     const isMatch = nodeMatchesSearch(node);
     const sizeMultiplier = searchTerm.trim() && isMatch ? 1.5 : 1;
     
     switch (node.group) {
-      case 1: // Artists
+      case 1: 
         return 8 * sizeMultiplier;
-      case 2: // Albums
+      case 2: 
         return 6 * sizeMultiplier;
-      case 3: // Songs
+      case 3: 
         return 4 * sizeMultiplier;
       default:
         return 3 * sizeMultiplier;
@@ -97,7 +91,6 @@ const GraphCanvas = ({ graphData, onNodeClick, selectedNode, searchTerm = '' }) 
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Zoom to first matching node when searching
   useEffect(() => {
     if (searchTerm.trim() && fgRef.current && graphData.nodes.length > 0) {
       const matchingNode = graphData.nodes.find(node => nodeMatchesSearch(node));
@@ -128,7 +121,6 @@ const GraphCanvas = ({ graphData, onNodeClick, selectedNode, searchTerm = '' }) 
         width={dimensions.width}
         height={dimensions.height}
         
-        // Node styling
         nodeRelSize={getNodeSize}
         nodeColor={getNodeColor}
         nodeLabel={(node) => {
@@ -148,26 +140,22 @@ const GraphCanvas = ({ graphData, onNodeClick, selectedNode, searchTerm = '' }) 
           return `${label}${details.length > 0 ? '\n' + details.join('\n') : ''}`;
         }}
         
-        // Node canvas rendering with labels
         nodeCanvasObject={(node, ctx, globalScale) => {
           const label = node.name || node.title || `${node.type}-${node.id}`;
           const fontSize = 12 / globalScale;
           const nodeSize = getNodeSize(node);
 
-          // Draw node
           ctx.beginPath();
           ctx.arc(node.x, node.y, nodeSize, 0, 2 * Math.PI, false);
           ctx.fillStyle = getNodeColor(node);
           ctx.fill();
 
-          // Draw border - highlight if selected
           const isSelected = selectedNode && selectedNode.id === node.id;
           ctx.strokeStyle = isSelected ? '#ffff00' : '#ffffff';
           ctx.lineWidth = isSelected ? 3 / globalScale : 1.5 / globalScale;
           ctx.stroke();
 
-          // Draw label
-          if (globalScale > 1) { // Only show labels when zoomed in enough
+          if (globalScale > 1) { 
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillStyle = '#ffffff';
@@ -181,13 +169,11 @@ const GraphCanvas = ({ graphData, onNodeClick, selectedNode, searchTerm = '' }) 
           }
         }}
         
-        // Link styling
         linkColor={getLinkColor}
         linkWidth={2}
         linkDirectionalArrowLength={6}
         linkDirectionalArrowRelPos={1}
         
-        // Interaction
         nodePointerAreaPaint={(node, color, ctx) => {
           ctx.fillStyle = color;
           ctx.beginPath();
@@ -200,44 +186,35 @@ const GraphCanvas = ({ graphData, onNodeClick, selectedNode, searchTerm = '' }) 
           if (onNodeClick) {
             onNodeClick(node);
           }
-          // Gentle focus on clicked node without aggressive zoom
           if (fgRef.current) {
             fgRef.current.centerAt(node.x, node.y, 800);
             fgRef.current.zoom(Math.max(fgRef.current.zoom(), 1.5), 600);
           }
         }}
         
-        // Enable node dragging
         onNodeDragEnd={(node) => {
-          // Fix node position after drag
           node.fx = node.x;
           node.fy = node.y;
         }}
         
         onNodeHover={(node) => {
-          // Change cursor on hover
           document.body.style.cursor = node ? 'pointer' : 'default';
         }}
         
-        // Physics settings - more stable
         d3AlphaDecay={0.05}
         d3VelocityDecay={0.4}
         cooldownTicks={50}
         warmupTicks={50}
         
-        // Background
         backgroundColor="#2c3e50"
         
-        // Enable zoom and pan with better controls
         enableZoomPanInteraction={true}
         enablePanInteraction={true}
         enableZoomInteraction={true}
         minZoom={0.1}
         maxZoom={8}
         
-        // Control initial positioning
         onEngineStart={() => {
-          // Set initial center position
           if (fgRef.current) {
             fgRef.current.centerAt(0, 0, 0);
           }

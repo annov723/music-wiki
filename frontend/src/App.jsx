@@ -56,7 +56,7 @@ function App() {
           <div className="search-container">
             <input
               type="text"
-              placeholder="Wyszukaj artystę, album lub piosenkę..."
+              placeholder="Wyszukaj..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="search-input"

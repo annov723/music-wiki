@@ -80,4 +80,21 @@ Frontend aplikacji został zbudowany przy użyciu **React** oraz **Vite**. Do ko
 *   **`@apollo/client`** - klient GraphQL do pobierania danych z serwera Apollo i zarządzania stanem
 *   **`react-force-graph-2d`** - komponent do renderowania grafu, który wizualizuje dane w postaci węzłów i krawędzi
 
+## Funkcjonalności
+
+Aplikacja oferuje szereg interaktywnych funkcji do zarządzania grafem muzycznym:
+
+*   **tworzenie nowego węzła** - użytkownik może dodawać nowe elementy do grafu za pomocą formularza. Po wybraniu typu węzła i wypełnieniu wymaganych pól, nowy element jest dodawany do bazy danych i pojawia się na grafie
+
+*   **edycja i usuwanie węzła** - kliknięcie na dowolny węzeł na grafie powoduje wyświetlenie panelu bocznego z jego szczegółami. Użytkownik ma możliwość edycji informacji o węźle lub jego całkowitego usunięcia z bazy danych
+
+*   **dodawanie krawędzi** - użytkownik może zdefiniować relacje, co pozwala na budowanie sieci powiązań
+
+*   **usuwanie krawędzi** - istnieje również możliwość usuwania istniejących relacji między węzłami
+
+*   **manipulacja grafem** - graf jest interaktywny. Użytkownik może przesuwać węzły oraz przybliżać i oddalać widok.  Aplikacja udostępnia również wyszukiwarkę, która podświetla pasujące węzły.
+
+
+
+
 
