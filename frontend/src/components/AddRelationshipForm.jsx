@@ -36,25 +36,25 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
   const getRelationshipRules = () => {
     return {
       'RELEASED': {
-        label: 'Artist RELEASED Album',
+        label: 'artysta wydał album',
         sourceType: 'artist',
         targetType: 'album',
-        description: 'Connect an artist to an album (Album can have only ONE artist)',
-        icon: '🎵'
+        sourcePl: 'artysta',
+        targetPl: 'album'
       },
       'PERFORMED': {
-        label: 'Artist PERFORMED Song',
+        label: 'artysta wydał piosenkę',
         sourceType: 'artist',
         targetType: 'song',
-        description: 'Connect an artist to a song (Song can have multiple artists)',
-        icon: '🎤'
+        sourcePl: 'artysta',
+        targetPl: 'piosenka'
       },
       'CONTAINS': {
-        label: 'Album CONTAINS Song',
+        label: 'album zawiera piosenkę',
         sourceType: 'album',
         targetType: 'song',
-        description: 'Connect an album to a song (Song belongs to ONE album)',
-        icon: '💿'
+        sourcePl: 'album',
+        targetPl: 'piosenka'
       }
     };
   };
@@ -82,7 +82,7 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
     e.preventDefault();
     
     if (!sourceNode || !targetNode) {
-      alert('Please select both source and target nodes');
+      alert('Należy wybrać oba węzły połączone krawędzią.');
       return;
     }
 
@@ -91,7 +91,7 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
       if (selectedAlbum && selectedAlbum.artist && selectedAlbum.artist.length > 0) {
         const currentArtist = selectedAlbum.artist[0];
         if (currentArtist.id !== sourceNode) {
-          alert(`This album already has artist "${currentArtist.name}". An album can only have one artist.`);
+          alert(`Ten album już ma twórcę: ${currentArtist.name}. Album może mieć tylko 1 twórcę.`);
           return;
         }
       }
@@ -102,7 +102,7 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
       if (selectedSong && selectedSong.album && selectedSong.album.length > 0) {
         const currentAlbum = selectedSong.album[0];
         if (currentAlbum.id !== sourceNode) {
-          alert(`This song is already in album "${currentAlbum.title}". A song can only belong to one album.`);
+          alert(`Ta piosenka jest już w albumie": ${currentAlbum.title}. Piosenka może należeć tylko do jednego albumu.`);
           return;
         }
       }
@@ -155,13 +155,13 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
         onRelationshipCreated(result);
       }
 
-      alert(`Relationship created successfully!`);
+      alert(`Krawędź dodana.`);
       setSourceNode('');
       setTargetNode('');
 
     } catch (error) {
       console.error('Error creating relationship:', error);
-      alert(`Error creating relationship: ${error.message}`);
+      alert(`Błąd podczas usuwania krawędzi: ${error.message}`);
     }
   };
 
@@ -173,9 +173,11 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
   const inputStyle = {
     width: '100%',
     padding: '10px',
-    border: '1px solid #ddd',
+    border: '1px solid #4a5a6a',
     borderRadius: '4px',
     fontSize: '14px',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    color: '#2c3e50',
     boxSizing: 'border-box'
   };
 
@@ -193,7 +195,7 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
       zIndex: 1000
     }}>
       <div style={{
-        backgroundColor: 'white',
+        backgroundColor: '#2c3e50',
         padding: '30px',
         borderRadius: '8px',
         width: '450px',
@@ -201,30 +203,14 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
         overflowY: 'auto',
         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
       }}>
-        <h2 style={{ marginBottom: '20px', textAlign: 'center', color: '#333' }}>
-          Create Relationship
+        <h2 style={{ marginBottom: '20px', textAlign: 'center' }}>
+          Dodaj krawędź
         </h2>
-
-        <div style={{ 
-          marginBottom: '20px',
-          padding: '12px',
-          backgroundColor: '#f8f9fa',
-          borderRadius: '6px',
-          fontSize: '12px',
-          color: '#495057'
-        }}>
-          <strong>Relationship Rules:</strong>
-          <ul style={{ margin: '8px 0 0 0', paddingLeft: '18px' }}>
-            <li>🎤 <strong>Artist</strong>: Can have many albums and many songs</li>
-            <li>💿 <strong>Album</strong>: Has ONE artist and many songs</li>
-            <li>🎵 <strong>Song</strong>: Belongs to ONE album, can have many artists</li>
-          </ul>
-        </div>
 
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '20px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              Relationship Type *
+              Typ relacji *
             </label>
             <select
               value={relationshipType}
@@ -236,26 +222,15 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
             >
               {Object.entries(rules).map(([key, rule]) => (
                 <option key={key} value={key}>
-                  {rule.icon} {rule.label}
+                  {rule.label}
                 </option>
               ))}
             </select>
-            <div style={{ 
-              fontSize: '12px', 
-              color: '#666', 
-              marginTop: '5px',
-              padding: '8px',
-              backgroundColor: '#e3f2fd',
-              borderRadius: '4px',
-              borderLeft: '4px solid #2196f3'
-            }}>
-              💡 {currentRule.description}
-            </div>
           </div>
 
           <div style={{ marginBottom: '15px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              Source ({currentRule.sourceType.charAt(0).toUpperCase() + currentRule.sourceType.slice(1)}) *
+              Węzeł źródłowy ({currentRule.sourcePl}) *
             </label>
             <select
               value={sourceNode}
@@ -263,7 +238,7 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
               required
               style={inputStyle}
             >
-              <option value="">Select {currentRule.sourceType}...</option>
+              <option value="">Wybierz węzeł...</option>
               {sourceNodes.map((node) => (
                 <option key={node.id} value={node.id}>
                   {node.name || node.title} (ID: {node.id})
@@ -272,20 +247,9 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
             </select>
           </div>
 
-          <div style={{ 
-            textAlign: 'center', 
-            margin: '15px 0',
-            fontSize: '18px',
-            fontWeight: 'bold',
-            color: '#007bff'
-          }}>
-            {relationshipType}
-            <div style={{ fontSize: '12px', color: '#666' }}>↓</div>
-          </div>
-
           <div style={{ marginBottom: '20px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              Target ({currentRule.targetType.charAt(0).toUpperCase() + currentRule.targetType.slice(1)}) *
+              Węzeł docelowy ({currentRule.targetPl}) *
             </label>
             <select
               value={targetNode}
@@ -293,29 +257,13 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
               required
               style={inputStyle}
             >
-              <option value="">Select {currentRule.targetType}...</option>
+              <option value="">Wybierz węzeł...</option>
               {targetNodes.map((node) => (
                 <option key={node.id} value={node.id}>
                   {node.name || node.title} (ID: {node.id})
                 </option>
               ))}
             </select>
-          </div>
-
-          <div style={{
-            backgroundColor: '#f8f9fa',
-            padding: '15px',
-            borderRadius: '4px',
-            marginBottom: '20px',
-            border: '1px solid #e9ecef'
-          }}>
-            <h4 style={{ margin: '0 0 10px 0', color: '#495057' }}>Schema Rules:</h4>
-            <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '14px', color: '#666' }}>
-              <li>Artists can RELEASE multiple Albums (collaboration albums)</li>
-              <li>Artists can PERFORM multiple Songs (features, collaborations)</li>
-              <li>Albums can CONTAIN multiple Songs</li>
-              <li>Songs MUST belong to exactly one Album</li>
-            </ul>
           </div>
 
           <div style={{ 
@@ -338,7 +286,7 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
                 fontWeight: 'bold',
                 boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
                 transition: 'background-color 0.2s',
-                width: '150px'
+                width: '48%'
               }}
               onMouseEnter={(e) => e.target.style.backgroundColor = '#c62828'}
               onMouseLeave={(e) => e.target.style.backgroundColor = '#d32f2f'}
@@ -358,7 +306,7 @@ const AddRelationshipForm = ({ onClose, onRelationshipCreated }) => {
                 fontWeight: 'bold',
                 boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
                 transition: 'background-color 0.2s',
-                width: '150px'
+                width: '48%'
               }}
               onMouseEnter={(e) => e.target.style.backgroundColor = '#218838'}
               onMouseLeave={(e) => e.target.style.backgroundColor = '#28a745'}

@@ -16,12 +16,10 @@ const RemoveRelationshipForm = ({ onClose, onRelationshipRemoved }) => {
   const [sourceNode, setSourceNode] = useState('');
   const [targetNode, setTargetNode] = useState('');
 
-  // Fetch all nodes
   const { data: artistsData } = useQuery(GET_ALL_ARTISTS);
   const { data: albumsData } = useQuery(GET_ALL_ALBUMS);
   const { data: songsData } = useQuery(GET_ALL_SONGS);
 
-  // Disconnect mutations
   const [disconnectArtistFromAlbum] = useMutation(DISCONNECT_ARTIST_FROM_ALBUM, {
     refetchQueries: [{ query: GET_GRAPH_DATA }]
   });
@@ -38,25 +36,25 @@ const RemoveRelationshipForm = ({ onClose, onRelationshipRemoved }) => {
   const getRelationshipRules = () => {
     return {
       'RELEASED': {
-        label: 'Artist RELEASED Album',
+        label: 'artysta wydał album',
         sourceType: 'artist',
         targetType: 'album',
-        description: 'Remove connection between artist and album',
-        icon: '🎵'
+        sourcePl: 'artysta',
+        targetPl: 'album'
       },
       'PERFORMED': {
-        label: 'Artist PERFORMED Song',
+        label: 'artysta wydał piosenkę',
         sourceType: 'artist',
         targetType: 'song',
-        description: 'Remove connection between artist and song',
-        icon: '🎤'
+        sourcePl: 'artysta',
+        targetPl: 'piosenka'
       },
       'CONTAINS': {
-        label: 'Album CONTAINS Song',
+        label: 'album zawiera piosenkę',
         sourceType: 'album',
         targetType: 'song',
-        description: 'Remove song from album',
-        icon: '💿'
+        sourcePl: 'album',
+        targetPl: 'piosenka'
       }
     };
   };
@@ -74,7 +72,6 @@ const RemoveRelationshipForm = ({ onClose, onRelationshipRemoved }) => {
     }
   };
 
-  // Filter target nodes to show only those connected to the selected source node
   const getFilteredTargetNodes = () => {
     const rules = getRelationshipRules()[relationshipType];
     const allTargets = getNodesForType(rules.targetType);
@@ -88,15 +85,14 @@ const RemoveRelationshipForm = ({ onClose, onRelationshipRemoved }) => {
       return allTargets;
     }
 
-    // Filter based on relationship type
     switch (relationshipType) {
-      case 'RELEASED': // Artist -> Album
+      case 'RELEASED': 
         return sourceNodeData.albums || [];
       
-      case 'PERFORMED': // Artist -> Song
+      case 'PERFORMED': 
         return sourceNodeData.songs || [];
       
-      case 'CONTAINS': // Album -> Song
+      case 'CONTAINS': 
         return sourceNodeData.songs || [];
       
       default:
@@ -114,7 +110,7 @@ const RemoveRelationshipForm = ({ onClose, onRelationshipRemoved }) => {
     e.preventDefault();
     
     if (!sourceNode || !targetNode) {
-      alert('Please select both source and target nodes');
+      alert('Należy wybrać oba węzły połączone krawędzią.');
       return;
     }
 
@@ -122,7 +118,6 @@ const RemoveRelationshipForm = ({ onClose, onRelationshipRemoved }) => {
       let result;
 
       if (relationshipType === 'RELEASED') {
-        // Artist -> Album
         result = await disconnectArtistFromAlbum({
           variables: {
             where: { id: { in: [sourceNode] } },
@@ -132,7 +127,6 @@ const RemoveRelationshipForm = ({ onClose, onRelationshipRemoved }) => {
           }
         });
       } else if (relationshipType === 'PERFORMED') {
-        // Artist -> Song
         result = await disconnectArtistFromSong({
           variables: {
             where: { id: { in: [sourceNode] } },
@@ -142,7 +136,6 @@ const RemoveRelationshipForm = ({ onClose, onRelationshipRemoved }) => {
           }
         });
       } else if (relationshipType === 'CONTAINS') {
-        // Album -> Song (disconnect from both sides)
         result = await disconnectAlbumFromSong({
           variables: {
             where: { id: { in: [sourceNode] } },
@@ -152,7 +145,6 @@ const RemoveRelationshipForm = ({ onClose, onRelationshipRemoved }) => {
           }
         });
         
-        // Also disconnect from song to album
         await disconnectSongFromAlbum({
           variables: {
             where: { id: { in: [targetNode] } },
@@ -167,13 +159,13 @@ const RemoveRelationshipForm = ({ onClose, onRelationshipRemoved }) => {
         onRelationshipRemoved(result);
       }
 
-      alert(`Relationship removed successfully!`);
+      alert(`Krawędź usunięta.`);
       setSourceNode('');
       setTargetNode('');
 
     } catch (error) {
       console.error('Error removing relationship:', error);
-      alert(`Error removing relationship: ${error.message}`);
+      alert(`Błąd podczas usuwania krawędzi: ${error.message}`);
     }
   };
 
@@ -185,9 +177,11 @@ const RemoveRelationshipForm = ({ onClose, onRelationshipRemoved }) => {
   const inputStyle = {
     width: '100%',
     padding: '10px',
-    border: '1px solid #ddd',
+    border: '1px solid #4a5a6a',
     borderRadius: '4px',
     fontSize: '14px',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    color: '#2c3e50',
     boxSizing: 'border-box'
   };
 
@@ -205,7 +199,7 @@ const RemoveRelationshipForm = ({ onClose, onRelationshipRemoved }) => {
       zIndex: 1000
     }}>
       <div style={{
-        backgroundColor: 'white',
+        backgroundColor: '#2c3e50',
         padding: '30px',
         borderRadius: '8px',
         width: '450px',
@@ -213,27 +207,14 @@ const RemoveRelationshipForm = ({ onClose, onRelationshipRemoved }) => {
         overflowY: 'auto',
         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
       }}>
-        <h2 style={{ marginBottom: '20px', textAlign: 'center', color: '#d32f2f' }}>
-          🗑️ Remove Relationship
+        <h2 style={{ marginBottom: '20px', textAlign: 'center' }}>
+          Usuń krawędź
         </h2>
-
-        {/* Warning message */}
-        <div style={{ 
-          marginBottom: '20px',
-          padding: '12px',
-          backgroundColor: '#fff3cd',
-          borderRadius: '6px',
-          fontSize: '12px',
-          color: '#856404',
-          borderLeft: '4px solid #ffc107'
-        }}>
-          <strong>⚠️ Warning:</strong> This will permanently remove the connection between the selected nodes.
-        </div>
 
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '20px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              Relationship Type *
+              Typ relacji *
             </label>
             <select
               value={relationshipType}
@@ -245,37 +226,26 @@ const RemoveRelationshipForm = ({ onClose, onRelationshipRemoved }) => {
             >
               {Object.entries(rules).map(([key, rule]) => (
                 <option key={key} value={key}>
-                  {rule.icon} {rule.label}
+                  {rule.label}
                 </option>
               ))}
             </select>
-            <div style={{ 
-              fontSize: '12px', 
-              color: '#666', 
-              marginTop: '5px',
-              padding: '8px',
-              backgroundColor: '#ffebee',
-              borderRadius: '4px',
-              borderLeft: '4px solid #f44336'
-            }}>
-              💡 {currentRule.description}
-            </div>
           </div>
 
           <div style={{ marginBottom: '15px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              Source ({currentRule.sourceType.charAt(0).toUpperCase() + currentRule.sourceType.slice(1)}) *
+              Węzeł żródłowy ({currentRule.sourcePl}) *
             </label>
             <select
               value={sourceNode}
               onChange={(e) => {
                 setSourceNode(e.target.value);
-                setTargetNode(''); // Clear target when source changes
+                setTargetNode(''); 
               }}
               required
               style={inputStyle}
             >
-              <option value="">Select {currentRule.sourceType}...</option>
+              <option value="">Wybierz węzeł...</option>
               {sourceNodes.map((node) => (
                 <option key={node.id} value={node.id}>
                   {node.name || node.title}
@@ -284,20 +254,9 @@ const RemoveRelationshipForm = ({ onClose, onRelationshipRemoved }) => {
             </select>
           </div>
 
-          <div style={{ 
-            textAlign: 'center', 
-            margin: '15px 0',
-            fontSize: '18px',
-            fontWeight: 'bold',
-            color: '#d32f2f'
-          }}>
-            ❌ {relationshipType}
-            <div style={{ fontSize: '12px', color: '#666' }}>↓</div>
-          </div>
-
           <div style={{ marginBottom: '20px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              Target ({currentRule.targetType.charAt(0).toUpperCase() + currentRule.targetType.slice(1)}) *
+              Węzeł docelowy ({currentRule.targetPl}) *
             </label>
             <select
               value={targetNode}
@@ -308,10 +267,10 @@ const RemoveRelationshipForm = ({ onClose, onRelationshipRemoved }) => {
             >
               <option value="">
                 {!sourceNode 
-                  ? `Select ${currentRule.sourceType} first...` 
+                  ? `Wybierz węzeł źródłowy jako pierwszy...` 
                   : targetNodes.length === 0 
-                    ? `No connected ${currentRule.targetType}s found`
-                    : `Select ${currentRule.targetType}...`
+                    ? `Brak połączonych węzłów`
+                    : `Wybierz węzeł...`
                 }
               </option>
               {targetNodes.map((node) => (
@@ -330,7 +289,7 @@ const RemoveRelationshipForm = ({ onClose, onRelationshipRemoved }) => {
                 borderRadius: '4px',
                 borderLeft: '4px solid #ff9800'
               }}>
-                ℹ️ No {currentRule.targetType}s are connected to this {currentRule.sourceType}
+                Brak krawędzi pomiędzy wybranymi węzłami.
               </div>
             )}
           </div>
@@ -350,7 +309,7 @@ const RemoveRelationshipForm = ({ onClose, onRelationshipRemoved }) => {
                 fontWeight: 'bold',
                 boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
                 transition: 'background-color 0.2s',
-                width: '150px'
+                width: '48%'
               }}
               onMouseEnter={(e) => e.target.style.backgroundColor = '#c62828'}
               onMouseLeave={(e) => e.target.style.backgroundColor = '#d32f2f'}
@@ -370,7 +329,7 @@ const RemoveRelationshipForm = ({ onClose, onRelationshipRemoved }) => {
                 fontWeight: 'bold',
                 boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
                 transition: 'background-color 0.2s',
-                width: '150px'
+                width: '48%'
               }}
               onMouseEnter={(e) => e.target.style.backgroundColor = '#218838'}
               onMouseLeave={(e) => e.target.style.backgroundColor = '#28a745'}
