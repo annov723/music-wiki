@@ -153,7 +153,7 @@ const EditNodeForm = ({ node, onClose, onNodeUpdated }) => {
       }
 
       setIsEditing(false);
-      alert(`${node.type.charAt(0).toUpperCase() + node.type.slice(1)} updated successfully!`);
+      alert(`Węzeł zakutalizowany.`);
       
     } catch (error) {
       console.error('Error updating node:', error);
