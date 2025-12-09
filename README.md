@@ -23,7 +23,7 @@ type Artist {
     nationality: String
     spotifyUrl: String
     albums: [Album!]! @relationship(type: "RELEASED", direction: OUT)
-    songs: [Song!]! @relationship(type: "PERFORMED", direction: OUT)
+    songs: [Song!]! @relationship(type: "RELEASED", direction: OUT)
 }
 
 type Album {
@@ -40,7 +40,7 @@ type Song {
     title: String!
     genre: String
     spotifyUrl: String
-    artists: [Artist!]! @relationship(type: "PERFORMED", direction: IN)
+    artists: [Artist!]! @relationship(type: "RELEASED", direction: IN)
     album: [Album!]! @relationship(type: "CONTAINS", direction: IN)
 }
 ```
@@ -93,8 +93,3 @@ Aplikacja oferuje szereg interaktywnych funkcji do zarządzania grafem muzycznym
 *   **usuwanie krawędzi** - istnieje również możliwość usuwania istniejących relacji między węzłami
 
 *   **manipulacja grafem** - graf jest interaktywny. Użytkownik może przesuwać węzły oraz przybliżać i oddalać widok.  Aplikacja udostępnia również wyszukiwarkę, która podświetla pasujące węzły.
-
-
-
-
-
